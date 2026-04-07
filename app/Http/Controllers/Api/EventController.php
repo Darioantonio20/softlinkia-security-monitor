@@ -25,10 +25,10 @@ class EventController extends Controller
             'timestamp' => now(),
         ]);
 
-        return response()->json([
-            'success' => true,
-            'message' => 'Evento procesado correctamente.',
-            'event' => $event,
-        ]);
+        return (new \App\Http\Resources\EventResource($event))
+            ->additional([
+                'success' => true,
+                'message' => 'Evento procesado correctamente.',
+            ]);
     }
 }
