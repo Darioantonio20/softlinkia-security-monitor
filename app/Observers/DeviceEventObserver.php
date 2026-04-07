@@ -22,6 +22,14 @@ class DeviceEventObserver
                     'status' => 'pendiente',
                     'description' => 'El dispositivo reportó una desconexión automática a las ' . $deviceEvent->timestamp,
                 ]);
+
+                \App\Models\AuditLog::create([
+                    'action' => 'EVENTO_CRITICO',
+                    'description' => "Sistema detectó desconexión en dispositivo ID: {$deviceEvent->device_id}",
+                    'ip_address' => request()->ip(),
+                    'metadata' => ['device_id' => $deviceEvent->device_id]
+                ]);
+
                 Log::info("Incidencia automática creada para el dispositivo ID: {$deviceEvent->device_id}");
             } catch (\Exception $e) {
                 Log::error("Error al crear incidencia automática: " . $e->getMessage());

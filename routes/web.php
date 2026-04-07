@@ -12,6 +12,14 @@ Route::view('devices', 'devices')
     ->middleware(['auth', 'verified'])
     ->name('devices');
 
+Route::view('incidents', 'incidents')
+    ->middleware(['auth', 'verified'])
+    ->name('incidents');
+
+Route::view('audit-logs', 'audit-logs')
+    ->middleware(['auth', 'verified', 'role:Administrador'])
+    ->name('audit-logs');
+
 Route::view('profile', 'profile')
     ->middleware(['auth'])
     ->name('profile');

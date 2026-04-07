@@ -36,6 +36,14 @@ new class extends Component
                     <x-nav-link :href="route('devices')" :active="request()->routeIs('devices')" wire:navigate>
                         {{ __('Dispositivos') }}
                     </x-nav-link>
+                    <x-nav-link :href="route('incidents')" :active="request()->routeIs('incidents')" wire:navigate>
+                        {{ __('Incidencias') }}
+                    </x-nav-link>
+                    @role('Administrador')
+                    <x-nav-link :href="route('audit-logs')" :active="request()->routeIs('audit-logs')" wire:navigate>
+                        {{ __('Bitácora') }}
+                    </x-nav-link>
+                    @endrole
                 </div>
             </div>
 
@@ -90,6 +98,14 @@ new class extends Component
             <x-responsive-nav-link :href="route('devices')" :active="request()->routeIs('devices')" wire:navigate>
                 {{ __('Dispositivos') }}
             </x-responsive-nav-link>
+            <x-responsive-nav-link :href="route('incidents')" :active="request()->routeIs('incidents')" wire:navigate>
+                {{ __('Incidencias') }}
+            </x-responsive-nav-link>
+            @role('Administrador')
+            <x-responsive-nav-link :href="route('audit-logs')" :active="request()->routeIs('audit-logs')" wire:navigate>
+                {{ __('Bitácora') }}
+            </x-responsive-nav-link>
+            @endrole
         </div>
 
         <!-- Responsive Settings Options -->
