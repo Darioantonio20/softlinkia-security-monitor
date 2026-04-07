@@ -80,13 +80,27 @@ new class extends Component {
                 'client_id' => $this->client_id,
                 'status' => $this->status,
             ]);
+
+            \App\Models\AuditLog::create([
+                'user_id' => auth()->id(),
+                'action' => 'DEVICE_UPDATED',
+                'description' => "Se actualizó el dispositivo: {$this->name}",
+                'ip_address' => request()->ip(),
+            ]);
         } else {
-            Device::create([
+            $device = Device::create([
                 'name' => $this->name,
                 'type' => $this->type,
                 'location' => $this->location,
                 'client_id' => $this->client_id,
                 'status' => $this->status,
+            ]);
+
+            \App\Models\AuditLog::create([
+                'user_id' => auth()->id(),
+                'action' => 'DEVICE_CREATED',
+                'description' => "Se creó un nuevo dispositivo: {$this->name}",
+                'ip_address' => request()->ip(),
             ]);
         }
 
@@ -96,7 +110,15 @@ new class extends Component {
 
     public function delete(Device $device)
     {
+        $name = $device->name;
         $device->delete();
+
+        \App\Models\AuditLog::create([
+            'user_id' => auth()->id(),
+            'action' => 'DEVICE_DELETED',
+            'description' => "Se eliminó el dispositivo: {$name}",
+            'ip_address' => request()->ip(),
+        ]);
     }
 
     public function simulateEvent(Device $device, $type)
