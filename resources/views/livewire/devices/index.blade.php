@@ -98,9 +98,26 @@ new class extends Component {
     {
         $device->delete();
     }
+
+    public function simulateEvent(Device $device, $type)
+    {
+        \App\Models\DeviceEvent::create([
+            'device_id' => $device->id,
+            'type' => $type,
+            'timestamp' => now(),
+        ]);
+
+        session()->flash('status', "Evento '$type' simulado para {$device->name}.");
+    }
 }; ?>
 
 <div>
+    @if (session('status'))
+        <div class="mb-4 font-medium text-sm text-green-600 bg-green-50 p-4 rounded-lg">
+            {{ session('status') }}
+        </div>
+    @endif
+
     <div class="flex justify-between items-center mb-6">
         <div class="flex gap-4 w-2/3">
             <input wire:model.live="search" type="text" placeholder="Buscar por nombre o ubicación..." 
@@ -147,12 +164,19 @@ new class extends Component {
                             </span>
                         </td>
                         <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">{{ $device->client->name }}</td>
-                        <td class="px-6 py-4 whitespace-nowrap text-right text-sm font-medium">
+                        <td class="px-6 py-4 whitespace-nowrap text-right text-sm font-medium flex justify-end gap-2">
+                            <div x-data="{ open: false }" class="relative">
+                                <button @click="open = !open" class="text-amber-600 hover:text-amber-900 px-2 py-1 bg-amber-50 rounded border border-amber-200">Simular</button>
+                                <div x-show="open" @click.away="open = false" class="absolute right-0 mt-2 w-48 bg-white border rounded shadow-xl z-50">
+                                    <button wire:click="simulateEvent({{ $device->id }}, 'desconexión')" @click="open = false" class="block w-full text-left px-4 py-2 text-sm hover:bg-red-50 text-red-600 font-bold border-b">Simular Desconexión</button>
+                                    <button wire:click="simulateEvent({{ $device->id }}, 'anomalía')" @click="open = false" class="block w-full text-left px-4 py-2 text-sm hover:bg-gray-100">Simular Anomalía</button>
+                                    <button wire:click="simulateEvent({{ $device->id }}, 'actividad sospechosa')" @click="open = false" class="block w-full text-left px-4 py-2 text-sm hover:bg-gray-100">Actividad Sospechosa</button>
+                                </div>
+                            </div>
+
                             @can('gestionar dispositivos')
-                                <button wire:click="edit({{ $device->id }})" class="text-indigo-600 hover:text-indigo-900 mr-3">Editar</button>
-                                <button wire:click="delete({{ $device->id }})" wire:confirm="¿Estás seguro?" class="text-red-600 hover:text-red-900">Eliminar</button>
-                            @else
-                                <span class="text-gray-400">Ver solo</span>
+                                <button wire:click="edit({{ $device->id }})" class="text-indigo-600 hover:text-indigo-900 border border-indigo-200 px-2 py-1 rounded bg-indigo-50">Editar</button>
+                                <button wire:click="delete({{ $device->id }})" wire:confirm="¿Estás seguro?" class="text-red-600 hover:text-red-900 border border-red-200 px-2 py-1 rounded bg-red-50">Borrar</button>
                             @endcan
                         </td>
                     </tr>
