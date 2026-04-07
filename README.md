@@ -18,7 +18,7 @@ El sistema permite la gestión de dispositivos de seguridad simulados, el monito
 
 -   **Backend**: Laravel 11 (PHP 8.2+)
 -   **Frontend**: Blade + TailwindCSS + Livewire (para reactividad en dashboard).
--   **Base de Datos**: SQLite (para facilitar portabilidad y revisión).
+-   **Base de Datos**: MySQL (8.0+)
 -   **Seguridad**: Spatie Permissions, Middleware de autenticación y protección CSRF/XSS/SQLi.
 
 ## 📦 Instalación
@@ -41,10 +41,9 @@ El sistema permite la gestión de dispositivos de seguridad simulados, el monito
     php artisan key:generate
     ```
 
-4.  **Base de Datos (SQLite):**
-    Asegúrate de que el archivo `database/database.sqlite` exista o créalo:
+4.  **Base de Datos (MySQL):**
+    Asegúrate de tener un servidor MySQL corriendo y crea la base de datos `softlinkia_security`:
     ```bash
-    touch database/database.sqlite
     php artisan migrate --seed
     ```
 
