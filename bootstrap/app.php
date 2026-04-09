@@ -19,6 +19,7 @@ return Application::configure(basePath: dirname(__DIR__))
         ]);
 
         $middleware->appendToGroup('web', [
+            \App\Http\Middleware\SecurityHeadersMiddleware::class,
             \App\Http\Middleware\AuditLogMiddleware::class,
         ]);
 

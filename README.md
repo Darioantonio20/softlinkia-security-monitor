@@ -22,14 +22,31 @@ El sistema permite la gestión de dispositivos de seguridad simulados, el monito
 - **Base de Datos**: MySQL
 - **Paquetes Clave**: Spatie Permission, Laravel Breeze (Volt stack), Sanctum.
 
-## 📋 Decisiones Técnicas y Supuestos
-1. **Livewire Volt**: Se eligió la arquitectura funcional de Volt para reducir la dispersión de archivos y mejorar la velocidad de desarrollo en componentes reactivos (Dashboard/CRUDs).
-2. **Observers para Automatización**: Se utilizó un `DeviceEventObserver` para desacoplar la lógica de creación de incidencias de los controladores, facilitando la escalabilidad del negocio.
-3. **Audit Log Manual**: Se implementó una bitácora personalizada para tener control total sobre los metadatos almacenados, cumpliendo con la exigencia de trazabilidad.
-4. **API Resources**: Se estandarizaron las respuestas externas para asegurar que cualquier sensor externo reciba un formato JSON profesional.
+## 🛡️ Mejores Prácticas y Seguridad Avanzada
+- **Seguridad en Capas**: Implementado `SecurityHeadersMiddleware` para protección contra XSS, Clickjacking y Sniffing.
+- **Asincronía (Performance)**: El registro de auditoría se procesa mediante **Jobs en segundo plano** para no penalizar la latencia del usuario.
+- **Arquitectura Limpia**: Uso de **Form Objects** para validación y **Observers** para disparar reglas de negocio automáticas.
+- **Resiliencia**: Páginas de error (404/500) personalizadas bajo la estética corporativa.
 
-## 📦 Instalación
+## 📦 Instalación y Despliegue
 
+### Opción A: Con Docker (Recomendado 🐳)
+Ideal para evaluación rápida sin instalar dependencias locales.
+1. **Clonar el proyecto.**
+2. **Copiar el entorno:** `cp .env.example .env`
+3. **Levantar contenedores:**
+   ```bash
+   docker-compose up -d --build
+   ```
+4. **Instalar dependencias y poblar (dentro del contenedor):**
+   ```bash
+   docker-compose exec app composer install
+   docker-compose exec app php artisan key:generate
+   docker-compose exec app php artisan migrate --seed
+   ```
+El sistema estará disponible en `http://localhost:8000`.
+
+### Opción B: Instalación Manual
 1. **Clonar e instalar:**
    ```bash
    git clone https://github.com/Darioantonio20/softlinkia-security-monitor.git
@@ -37,13 +54,13 @@ El sistema permite la gestión de dispositivos de seguridad simulados, el monito
    npm install && npm run build
    ```
 2. **Configurar BD (MySQL):** Crear base de datos `softlinkia_db` y configurar en `.env`.
-3. **Poblamiento:** `php artisan migrate --seed` (Crea roles, permisos, usuarios y dispositivos iniciales).
+3. **Poblamiento:** `php artisan migrate --seed`
 4. **Correr:** `php artisan serve` y `npm run dev`.
 
 ## 🔐 Accesos de Prueba (Password: `password`)
-- **Administrador**: admin@softlinkia.com (Control total + Bitácora)
-- **Operador**: operador@softlinkia.com (Gestión operativa)
-- **Cliente**: cliente@softlinkia.com (Solo visualización de sus equipos)
+- **Administrador**: admin@softlinkia.com (Poder total, Bitácora, Borrado)
+- **Operador**: operador@softlinkia.com (Gestión activa, sin borrado ni bitácora)
+- **Cliente**: cliente@softlinkia.com (Visualización filtrada de sus propios equipos)
 
 ## 📊 Arquitectura de Base de Datos
 ```mermaid
