@@ -19,6 +19,10 @@ new class extends Component {
     public $manual_type = '';
     public $manual_description = '';
 
+    // History View Fields
+    public $showingHistoryModal = false;
+    public $selectedIncident = null;
+
     public function with(): array
     {
         $query = Incident::query()->with(['device.client', 'assignedUser']);
@@ -114,6 +118,22 @@ new class extends Component {
         $this->dispatch('notify', "Incidencia #{$incident->id} actualizada a {$newStatus}.");
         session()->flash('status', 'Estado de la incidencia actualizado correctamente.');
     }
+
+    protected function messages()
+    {
+        return [
+            'manual_device_id.required' => 'Debe seleccionar un dispositivo del inventario.',
+            'manual_type.required' => 'El tipo de alerta es obligatorio para el protocolo.',
+            'manual_description.required' => 'La descripción es necesaria para el equipo de respuesta.',
+            'manual_description.min' => 'La descripción debe ser detallada (mínimo 10 caracteres).',
+        ];
+    }
+
+    public function viewHistory($incidentId)
+    {
+        $this->selectedIncident = Incident::with(['history.user', 'device'])->findOrFail($incidentId);
+        $this->showingHistoryModal = true;
+    }
 }; ?>
 
 <div x-data="{ notifications: [] }" 
@@ -126,7 +146,7 @@ new class extends Component {
                  x-transition:enter-start="opacity-0 translate-y-20 scale-90 blur-lg"
                  x-transition:enter-end="opacity-100 translate-y-0 scale-100 blur-0"
                  class="liquid-glass px-10 py-6 rounded-[2.5rem] shadow-[0_30px_60px_-15px_rgba(0,0,0,0.2)] border-white/50 flex items-center gap-6 min-w-[380px] group">
-                <div class="p-3 bg-indigo-600 rounded-2xl shadow-xl shadow-indigo-500/30 group-hover:scale-110 transition-transform">
+                <div class="p-3 bg-indigo-600 rounded-2xl shadow-sm transition-colors duration-500">
                     <svg class="w-6 h-6 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M15 17h5l-1.405-1.405A2.032 2.032 0 0118 14.158V11a6.002 6.002 0 00-4-5.659V5a2 2 0 10-4 0v.341C7.67 6.165 6 8.388 6 11v3.159c0 .538-.214 1.055-.595 1.436L4 17h5m6 0v1a3 3 0 11-6 0v-1m6 0H9" />
                     </svg>
@@ -202,12 +222,12 @@ new class extends Component {
             
             <!-- Directional Controls -->
             <button @click="scroll(-1)" x-show="!scrolledLeft" x-transition 
-                    class="absolute left-4 top-1/2 -translate-y-1/2 z-50 p-4 bg-indigo-600 text-white rounded-2xl shadow-[0_10px_30px_-5px_rgba(79,70,229,0.5)] border border-indigo-400 hover:bg-indigo-700 hover:scale-110 transition-all duration-300 group">
+                    class="absolute left-4 top-1/2 -translate-y-1/2 z-50 p-4 bg-indigo-600 text-white rounded-2xl shadow-[0_10px_30px_-5px_rgba(79,70,229,0.5)] border border-indigo-400 hover:bg-indigo-700 hover:scale-105 transition-all duration-700 group">
                 <svg class="w-6 h-6 group-active:-translate-x-1 transition-transform" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="3" d="M15 19l-7-7 7-7"/></svg>
             </button>
             
             <button @click="scroll(1)" x-show="!scrolledRight" x-transition 
-                    class="absolute right-4 top-1/2 -translate-y-1/2 z-50 p-4 bg-indigo-600 text-white rounded-2xl shadow-[0_10px_30px_-5px_rgba(79,70,229,0.5)] border border-indigo-400 hover:bg-indigo-700 hover:scale-110 transition-all duration-300 group">
+                    class="absolute right-4 top-1/2 -translate-y-1/2 z-50 p-4 bg-indigo-600 text-white rounded-2xl shadow-md border border-indigo-400 hover:bg-indigo-700 transition-colors duration-500 group">
                 <svg class="w-6 h-6 group-active:translate-x-1 transition-transform" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="3" d="M9 5l7 7-7 7"/></svg>
             </button>
 
@@ -256,7 +276,7 @@ new class extends Component {
                                             Asumir
                                         </button>
                                         <button wire:click="updateStatus({{ $incident->id }}, 'resuelto')" 
-                                                class="px-4 py-2 text-[9px] font-black uppercase tracking-widest text-white bg-emerald-600 rounded-xl hover:bg-emerald-500 transition-all shadow-lg hover:-translate-y-0.5">
+                                                class="px-4 py-2 text-[9px] font-black uppercase tracking-widest text-white bg-emerald-600 rounded-xl hover:bg-emerald-500 transition-all shadow-md">
                                             Cerrar
                                         </button>
                                     @else
@@ -265,6 +285,12 @@ new class extends Component {
                                             Finalizado
                                         </div>
                                     @endif
+
+                                    <button wire:click="viewHistory({{ $incident->id }})" 
+                                            class="p-2 text-indigo-600 hover:bg-indigo-50 rounded-xl transition-all"
+                                            title="Ver Historial">
+                                        <svg class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.5"><path stroke-linecap="round" stroke-linejoin="round" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" /></svg>
+                                    </button>
                                 </div>
                             </td>
                         </tr>
@@ -329,6 +355,10 @@ new class extends Component {
                                 Finalizado
                             </div>
                         @endif
+                        
+                        <button wire:click="viewHistory({{ $incident->id }})" class="p-3.5 bg-slate-100 text-slate-500 rounded-2xl border border-slate-200 shadow-sm active:scale-90">
+                            <svg class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.5"><path stroke-linecap="round" stroke-linejoin="round" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" /></svg>
+                        </button>
                     </div>
                 </div>
             @empty
@@ -339,7 +369,7 @@ new class extends Component {
         </div>
 
         <div class="px-10 py-8 bg-slate-50/50 backdrop-blur-md border-t border-slate-100">
-            {{ $incidents->links() }}
+            {{ $incidents->links('components.pagination-premium') }}
         </div>
     </div>
 
@@ -348,6 +378,7 @@ new class extends Component {
     <div class="fixed inset-0 z-[100] overflow-y-auto" x-data x-transition>
         <div class="flex items-center justify-center min-h-screen px-4 pt-4 pb-20 text-center sm:block sm:p-0">
             <div class="fixed inset-0 bg-slate-900/40 backdrop-blur-sm transition-opacity" wire:click="$set('showingManualModal', false)"></div>
+            <div class="fixed inset-0 bg-slate-900/40 backdrop-blur-sm" wire:click="$set('showingManualModal', false)"></div>
             
             <span class="hidden sm:inline-block sm:align-middle sm:h-screen" aria-hidden="true">&#8203;</span>
             
@@ -359,16 +390,31 @@ new class extends Component {
                             <div class="p-2 bg-rose-600 text-white rounded-xl shadow-lg shadow-rose-200">
                                 <svg class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z" /></svg>
                             </div>
-                            Manual Incident Dispatch
+                            Despacho Manual de Incidencia
                         </h3>
                         <p class="mt-2 text-[11px] font-bold text-gray-400 uppercase tracking-widest">Apertura manual de ticket de seguridad</p>
+                    </div>
+
+                    {{-- Guía de Despacho --}}
+                    <div class="px-10 mb-6">
+                        <div class="bg-indigo-50 border border-indigo-100 rounded-2xl p-5 flex gap-4">
+                            <div class="text-indigo-600">
+                                <svg class="w-6 h-6" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.5"><path stroke-linecap="round" stroke-linejoin="round" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" /></svg>
+                            </div>
+                            <div>
+                                <p class="text-[10px] font-black text-indigo-700 uppercase tracking-widest mb-1">Guía de Despacho</p>
+                                <p class="text-[12px] text-indigo-900/70 font-medium leading-relaxed">
+                                    Asegúrese de identificar el dispositivo correcto. La descripción debe incluir **qué sucede**, **dónde sucede** y cualquier observación relevante para el técnico.
+                                </p>
+                            </div>
+                        </div>
                     </div>
 
                     <div class="px-10 pb-10 space-y-6">
                         <div>
                             <label class="block text-[10px] font-black text-gray-400 uppercase tracking-[0.2em] mb-2 px-1 text-left">Dispositivo Afectado</label>
                             <select wire:model="manual_device_id" class="w-full bg-white/50 border-gray-200 rounded-2xl focus:ring-2 focus:ring-rose-500/20 focus:border-rose-500 p-3.5 font-bold transition-all">
-                                <option value="">Seleccione el equipo...</option>
+                                <option value="">Seleccione el equipo en alerta...</option>
                                 @foreach($devices as $device)
                                     <option value="{{ $device->id }}">{{ $device->name }} ({{ $device->client->name }})</option>
                                 @endforeach
@@ -378,14 +424,14 @@ new class extends Component {
 
                         <div>
                             <label class="block text-[10px] font-black text-gray-400 uppercase tracking-[0.2em] mb-2 px-1 text-left">Tipo de Alerta</label>
-                            <input wire:model="manual_type" type="text" placeholder="Ej: Fallo de hardware, Error de energía..."
+                            <input wire:model="manual_type" type="text" placeholder="Ej: Fallo de conexión, Detección de humo..."
                                    class="w-full bg-white/50 border-gray-200 rounded-2xl focus:ring-2 focus:ring-rose-500/20 focus:border-rose-500 p-3.5 font-bold transition-all">
                             @error('manual_type') <span class="mt-1 text-rose-500 text-[10px] font-black uppercase tracking-tight px-1">{{ $message }}</span> @enderror
                         </div>
 
                         <div>
                             <label class="block text-[10px] font-black text-gray-400 uppercase tracking-[0.2em] mb-2 px-1 text-left">Descripción Detallada</label>
-                            <textarea wire:model="manual_description" rows="4" placeholder="Explique el problema detectado..."
+                            <textarea wire:model="manual_description" rows="4" placeholder="Escriba los detalles observados del evento..."
                                       class="w-full bg-white/50 border-gray-200 rounded-2xl focus:ring-2 focus:ring-rose-500/20 focus:border-rose-500 p-3.5 font-bold transition-all"></textarea>
                             @error('manual_description') <span class="mt-1 text-rose-500 text-[10px] font-black uppercase tracking-tight px-1">{{ $message }}</span> @enderror
                         </div>
@@ -402,6 +448,84 @@ new class extends Component {
                         </div>
                     </div>
                 </form>
+            </div>
+        </div>
+    </div>
+    @endif
+
+    <!-- History Timeline Sidebar (Slide-over) -->
+    @if($showingHistoryModal && $selectedIncident)
+    <div class="fixed inset-0 z-[110] overflow-hidden" x-data x-transition>
+        <div class="absolute inset-0 bg-slate-900/40 backdrop-blur-sm" wire:click="$set('showingHistoryModal', false)"></div>
+        <div class="pointer-events-none fixed inset-y-0 right-0 flex max-w-full pl-10">
+            <div class="pointer-events-auto w-screen max-w-md transform transition-all duration-500 ease-in-out sm:duration-700 translate-x-0">
+                <div class="flex h-full flex-col overflow-y-scroll bg-white shadow-2xl rounded-l-[3rem]">
+                    <div class="bg-indigo-600 px-8 py-10">
+                        <div class="flex items-center justify-between mb-4">
+                            <h2 class="text-xl font-black text-white uppercase tracking-[0.2em]">Historial Técnico</h2>
+                            <button wire:click="$set('showingHistoryModal', false)" class="text-white/70 hover:text-white transition-colors">
+                                <svg class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="3"><path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12" /></svg>
+                            </button>
+                        </div>
+                        <div class="bg-white/10 rounded-2xl p-4 backdrop-blur-md border border-white/20">
+                            <p class="text-[9px] font-black text-white/60 uppercase tracking-widest mb-1">Incidencia</p>
+                            <p class="text-lg font-black text-white">#{{ str_pad($selectedIncident->id, 5, '0', STR_PAD_LEFT) }}</p>
+                            <div class="flex items-center gap-2 mt-2">
+                                <span class="w-2 h-2 rounded-full bg-emerald-400"></span>
+                                <span class="text-[10px] font-bold text-white/80">{{ $selectedIncident->device->name }}</span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="relative flex-1 px-8 py-10">
+                        <div class="absolute left-10 top-10 bottom-10 w-[2px] bg-slate-100"></div>
+                        
+                        <div class="space-y-10 relative">
+                            {{-- Registro Inicial (Apertura) --}}
+                            <div class="relative pl-12">
+                                <div class="absolute -left-[1.35rem] top-1 w-5 h-5 rounded-full bg-indigo-600 border-4 border-white shadow-md"></div>
+                                <div class="flex flex-col">
+                                    <span class="text-[10px] font-black text-indigo-600 uppercase tracking-widest mb-1">Apertura de Ticket</span>
+                                    <span class="text-[13px] font-bold text-slate-800">Se registró la incidencia inicial</span>
+                                    <div class="flex items-center gap-2 mt-2 text-[11px] font-bold text-slate-400">
+                                        <svg class="w-3.5 h-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>
+                                        {{ $selectedIncident->created_at->format('d/m/Y H:i') }}
+                                    </div>
+                                </div>
+                            </div>
+
+                            {{-- Cambios de Estado --}}
+                            @foreach($selectedIncident->history->sortByDesc('created_at') as $record)
+                                <div class="relative pl-12 group">
+                                    <div class="absolute -left-[1.35rem] top-1 w-5 h-5 rounded-full bg-slate-200 border-4 border-white shadow-sm group-hover:bg-indigo-400 transition-colors"></div>
+                                    <div class="flex flex-col">
+                                        <div class="flex items-center gap-2 mb-1">
+                                            <span class="text-[9px] font-black text-slate-400 uppercase line-through">{{ $record->status_before }}</span>
+                                            <svg class="w-3 h-3 text-slate-300" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="3" d="M13 7l5 5m0 0l-5 5m5-5H6"/></svg>
+                                            <span class="text-[10px] font-black text-slate-900 uppercase tracking-widest bg-slate-100 px-2 py-0.5 rounded-md">{{ $record->status_after }}</span>
+                                        </div>
+                                        <p class="text-[13px] text-slate-600 font-medium italic">"{{ $record->comments }}"</p>
+                                        <div class="flex items-center gap-4 mt-3">
+                                            <div class="flex items-center gap-1.5 text-[10px] font-bold text-slate-400">
+                                                <svg class="w-3.5 h-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"/></svg>
+                                                {{ $record->user->name }}
+                                            </div>
+                                            <div class="text-[10px] font-bold text-slate-400">
+                                                {{ $record->created_at->format('d/m/Y H:i') }}
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            @endforeach
+                        </div>
+                    </div>
+
+                    <div class="p-8 border-t border-slate-50">
+                        <button wire:click="$set('showingHistoryModal', false)" class="w-full py-4 bg-slate-900 text-white rounded-2xl text-[11px] font-black uppercase tracking-widest shadow-xl hover:bg-slate-800 transition-all">
+                            Cerrar Auditoría
+                        </button>
+                    </div>
+                </div>
             </div>
         </div>
     </div>

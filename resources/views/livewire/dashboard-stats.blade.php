@@ -112,71 +112,95 @@ new class extends Component {
     <div class="grid grid-cols-2 lg:grid-cols-4 gap-5 mb-10">
 
         {{-- Salud del sistema --}}
-        <div class="col-span-2 lg:col-span-1 relative overflow-hidden bg-slate-900 rounded-[2rem] p-7 shadow-xl">
-            <div class="absolute top-0 right-0 w-40 h-40 bg-indigo-500/10 rounded-full -translate-y-10 translate-x-10 blur-3xl pointer-events-none"></div>
+        <div class="col-span-2 lg:col-span-1 relative overflow-hidden bg-white border border-slate-200/60 rounded-[2.5rem] p-7 shadow-sm group transition-all duration-700">
+            <div class="absolute -top-24 -right-24 w-48 h-48 bg-indigo-50/50 rounded-full blur-3xl group-hover:bg-indigo-100/50 transition-colors duration-500"></div>
             <div class="relative">
                 <div class="flex items-center justify-between mb-7">
-                    <p class="text-[9px] font-black text-slate-400 uppercase tracking-[0.3em]">Salud del Sistema</p>
-                    <div class="w-2 h-2 rounded-full bg-emerald-400 animate-pulse shadow-[0_0_8px_rgba(52,211,153,0.6)]"></div>
+                    <p class="text-[10px] font-bold text-slate-400 uppercase tracking-[0.2em]">Salud Global</p>
+                    <div class="flex items-center gap-2 px-2 py-1 bg-emerald-50 rounded-lg">
+                        <div class="w-1.5 h-1.5 rounded-full bg-emerald-500 animate-pulse"></div>
+                        <span class="text-[9px] font-bold text-emerald-600 uppercase">Live</span>
+                    </div>
                 </div>
-                <div class="flex items-end gap-1.5 mb-7">
-                    <span class="text-[64px] leading-none font-black text-white tracking-tight">{{ $stats['health'] }}</span>
-                    <span class="text-xl font-bold text-slate-600 mb-2">%</span>
+
+                <div class="flex items-center gap-6 mb-2">
+                    <div class="relative flex items-center justify-center w-24 h-24">
+                        <svg class="w-full h-full transform -rotate-90">
+                            <circle cx="48" cy="48" r="40" stroke="currentColor" stroke-width="8" fill="transparent" class="text-slate-50"/>
+                            <circle cx="48" cy="48" r="40" stroke="currentColor" stroke-width="8" fill="transparent" 
+                                    stroke-dasharray="251.2" 
+                                    stroke-dashoffset="{{ 251.2 - (251.2 * $stats['health']) / 100 }}" 
+                                    class="text-indigo-500 transition-all duration-1000 ease-out" stroke-linecap="round"/>
+                        </svg>
+                        <div class="absolute flex flex-col items-center">
+                            <span class="text-2xl font-black text-slate-900 tracking-tighter">{{ $stats['health'] }}%</span>
+                        </div>
+                    </div>
+                    <div>
+                        <p class="text-[22px] font-black text-slate-900 leading-tight mb-1">
+                            {{ $stats['health'] > 80 ? 'Óptima' : ($stats['health'] > 50 ? 'Regular' : 'Crítica') }}
+                        </p>
+                        <p class="text-[11px] font-bold text-slate-500 uppercase tracking-tighter">
+                            {{ $stats['active'] }} de {{ $totalDevices }} <br>activos ahora
+                        </p>
+                    </div>
                 </div>
-                <div class="w-full bg-white/[0.08] rounded-full h-1">
-                    <div class="h-full bg-indigo-400 rounded-full transition-all duration-700" style="width: {{ $stats['health'] }}%"></div>
-                </div>
-                <p class="text-[9px] font-bold text-slate-600 uppercase tracking-widest mt-3">
-                    {{ $stats['active'] }} / {{ $totalDevices }} operativos
-                </p>
             </div>
         </div>
 
         {{-- Dispositivos --}}
-        <div class="bg-white border border-slate-100 rounded-[2rem] p-7 shadow-sm hover:shadow-md transition-all group">
-            <div class="flex items-center justify-between mb-7">
-                <div class="p-2.5 bg-slate-50 rounded-xl text-slate-500 group-hover:bg-indigo-50 group-hover:text-indigo-600 transition-colors">
-                    <svg class="w-4.5 h-4.5" style="width:18px;height:18px" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 3v2m6-2v2M9 19v2m6-2v2M5 9H3m2 6H3m18-6h-2m2 6h-2M7 19h10a2 2 0 002-2V7a2 2 0 00-2-2H7a2 2 0 00-2 2v10a2 2 0 002 2z"/></svg>
+        <div class="bg-white border border-slate-100 rounded-[2.5rem] p-7 shadow-sm transition-all duration-700 group">
+            <div class="flex items-center justify-between mb-6">
+                <div class="w-12 h-12 bg-blue-50 rounded-2xl flex items-center justify-center text-blue-600 transition-all duration-700">
+                    <svg class="w-6 h-6" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.5"><path stroke-linecap="round" stroke-linejoin="round" d="M9 3v2m6-2v2M9 19v2m6-2v2M5 9H3m2 6H3m18-6h-2m2 6h-2M7 19h10a2 2 0 002-2V7a2 2 0 00-2-2H7a2 2 0 00-2 2v10a2 2 0 002 2z"/></svg>
                 </div>
-                <span class="text-[9px] font-black text-emerald-600 bg-emerald-50 px-2.5 py-1 rounded-full uppercase tracking-wider">{{ $stats['active'] }} activos</span>
+                <div class="text-right">
+                    <p class="text-[10px] font-bold text-slate-400 uppercase tracking-widest leading-none">Flota Total</p>
+                    <p class="text-3xl font-black text-slate-900 mt-1">{{ $totalDevices }}</p>
+                </div>
             </div>
-            <p class="text-[10px] font-black text-slate-400 uppercase tracking-[0.25em] mb-1">Dispositivos</p>
-            <p class="text-[44px] leading-none font-black text-slate-900 tracking-tight">{{ $totalDevices }}</p>
+            <div class="flex items-center gap-2 mt-4">
+                <div class="flex-1 h-1.5 bg-slate-100 rounded-full overflow-hidden">
+                    <div class="h-full bg-blue-500 rounded-full" style="width: {{ $totalDevices > 0 ? ($stats['active'] / $totalDevices) * 100 : 0 }}%"></div>
+                </div>
+                <span class="text-[10px] font-black text-blue-600">{{ $stats['active'] }} ON</span>
+            </div>
         </div>
 
         {{-- Incidencias --}}
-        <div class="bg-white border {{ $activeIncidents > 0 ? 'border-rose-100 bg-rose-50/20' : 'border-slate-100' }} rounded-[2rem] p-7 shadow-sm hover:shadow-md transition-all group">
-            <div class="flex items-center justify-between mb-7">
-                <div class="p-2.5 {{ $activeIncidents > 0 ? 'bg-rose-100 text-rose-600' : 'bg-slate-50 text-slate-500 group-hover:bg-rose-50 group-hover:text-rose-600' }} rounded-xl transition-colors">
-                    <svg style="width:18px;height:18px" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z"/></svg>
+        <div class="bg-white border {{ $activeIncidents > 0 ? 'border-rose-200 shadow-[0_15px_30px_rgba(244,63,94,0.08)]' : 'border-slate-100 shadow-[0_10px_30px_rgba(0,0,0,0.02)]' }} rounded-[2.5rem] p-7 transition-all duration-300 group">
+            <div class="flex items-center justify-between mb-6">
+                <div class="w-12 h-12 {{ $activeIncidents > 0 ? 'bg-rose-100 text-rose-600 shadow-[0_8px_20px_rgba(244,63,94,0.2)]' : 'bg-slate-50 text-slate-400' }} rounded-2xl flex items-center justify-center transition-all duration-500">
+                    <svg class="w-6 h-6" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.5"><path stroke-linecap="round" stroke-linejoin="round" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z"/></svg>
                 </div>
-                @if($activeIncidents > 0)
-                    <span class="flex items-center gap-1.5 text-[9px] font-black text-rose-600 bg-rose-100 px-2.5 py-1 rounded-full uppercase tracking-wider">
-                        <span class="w-1.5 h-1.5 rounded-full bg-rose-500 animate-pulse inline-block"></span>
-                        Abierto
-                    </span>
-                @else
-                    <span class="text-[9px] font-black text-slate-400 bg-slate-50 px-2.5 py-1 rounded-full uppercase tracking-wider">Sin alertas</span>
-                @endif
+                <div class="text-right">
+                    <p class="text-[10px] font-bold text-slate-400 uppercase tracking-widest leading-none">Incidencias</p>
+                    <p class="text-3xl font-black {{ $activeIncidents > 0 ? 'text-rose-600' : 'text-slate-900' }} mt-1">{{ $activeIncidents }}</p>
+                </div>
             </div>
-            <p class="text-[10px] font-black text-slate-400 uppercase tracking-[0.25em] mb-1">Incidencias</p>
-            <p class="text-[44px] leading-none font-black {{ $activeIncidents > 0 ? 'text-rose-600' : 'text-slate-900' }} tracking-tight">{{ $activeIncidents }}</p>
+            <div class="py-1">
+                <span class="text-[10px] font-black {{ $activeIncidents > 0 ? 'text-rose-600' : 'text-slate-400' }} uppercase tracking-widest">
+                    {{ $activeIncidents > 0 ? 'Requiere atención inmediata' : 'Sin alertas críticas' }}
+                </span>
+            </div>
         </div>
 
         {{-- En alerta --}}
-        <div class="bg-white border border-slate-100 rounded-[2rem] p-7 shadow-sm hover:shadow-md transition-all group">
-            <div class="flex items-center justify-between mb-7">
-                <div class="p-2.5 bg-slate-50 rounded-xl text-slate-500 group-hover:bg-amber-50 group-hover:text-amber-600 transition-colors">
-                    <svg style="width:18px;height:18px" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>
+        <div class="bg-white border border-slate-100 rounded-[2.5rem] p-7 shadow-sm transition-all duration-700 group">
+            <div class="flex items-center justify-between mb-6">
+                <div class="w-12 h-12 bg-amber-50 rounded-2xl flex items-center justify-center text-amber-600 transition-all duration-700">
+                    <svg class="w-6 h-6" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.5"><path stroke-linecap="round" stroke-linejoin="round" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>
                 </div>
-                @if($alertDevices > 0)
-                    <span class="text-[9px] font-black text-amber-700 bg-amber-50 px-2.5 py-1 rounded-full uppercase tracking-wider">Requiere atención</span>
-                @else
-                    <span class="text-[9px] font-black text-slate-400 bg-slate-50 px-2.5 py-1 rounded-full uppercase tracking-wider">Normal</span>
-                @endif
+                <div class="text-right">
+                    <p class="text-[10px] font-bold text-slate-400 uppercase tracking-widest leading-none">En Alerta</p>
+                    <p class="text-3xl font-black text-slate-900 mt-1">{{ $alertDevices }}</p>
+                </div>
             </div>
-            <p class="text-[10px] font-black text-slate-400 uppercase tracking-[0.25em] mb-1">En Alerta</p>
-            <p class="text-[44px] leading-none font-black text-slate-900 tracking-tight">{{ $alertDevices }}</p>
+            <div class="py-1">
+                <span class="text-[10px] font-black {{ $alertDevices > 0 ? 'text-amber-600' : 'text-slate-400' }} uppercase tracking-widest">
+                    {{ $alertDevices > 0 ? 'Anomalías detectadas' : 'Estado de red óptimo' }}
+                </span>
+            </div>
         </div>
     </div>
 
@@ -264,7 +288,7 @@ new class extends Component {
                     <p class="text-base font-black text-slate-900">Actividad Reciente</p>
                 </div>
                 <a href="{{ route('incidents') }}"
-                   class="flex items-center gap-2 text-[11px] font-black text-indigo-600 uppercase tracking-widest hover:gap-3 transition-all duration-200">
+                   class="flex items-center gap-2 text-[11px] font-black text-indigo-600 uppercase tracking-widest hover:gap-3 transition-all duration-500">
                     Ver incidencias
                     <svg class="w-3.5 h-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M9 5l7 7-7 7"/></svg>
                 </a>

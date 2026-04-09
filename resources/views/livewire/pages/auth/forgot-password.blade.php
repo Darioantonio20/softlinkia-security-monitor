@@ -17,9 +17,6 @@ new #[Layout('layouts.guest')] class extends Component
             'email' => ['required', 'string', 'email'],
         ]);
 
-        // We will send the password reset link to this user. Once we have attempted
-        // to send the link, we will examine the response then see the message we
-        // need to show to the user. Finally, we'll send out a proper response.
         $status = Password::sendResetLink(
             $this->only('email')
         );
@@ -37,25 +34,36 @@ new #[Layout('layouts.guest')] class extends Component
 }; ?>
 
 <div>
-    <div class="mb-4 text-sm text-gray-600">
-        {{ __('Forgot your password? No problem. Just let us know your email address and we will email you a password reset link that will allow you to choose a new one.') }}
+    <div class="mb-10">
+        <h2 class="text-3xl font-black text-gray-800 tracking-tighter">Recuperación</h2>
+        <p class="text-[11px] font-bold text-gray-400 uppercase tracking-widest mt-2">Restablezca su acceso de seguridad</p>
+    </div>
+
+    <div class="mb-8 text-[13px] font-bold text-slate-500 leading-relaxed">
+        {{ __('¿Olvidó su contraseña? No hay problema. Indíquenos su dirección de correo electrónico y le enviaremos un enlace de restablecimiento que le permitirá elegir una nueva.') }}
     </div>
 
     <!-- Session Status -->
-    <x-auth-session-status class="mb-4" :status="session('status')" />
+    <x-auth-session-status class="mb-6" :status="session('status')" />
 
-    <form wire:submit="sendPasswordResetLink">
+    <form wire:submit="sendPasswordResetLink" class="space-y-6">
         <!-- Email Address -->
         <div>
-            <x-input-label for="email" :value="__('Email')" />
-            <x-text-input wire:model="email" id="email" class="block mt-1 w-full" type="email" name="email" required autofocus />
+            <x-input-label for="email" :value="__('Correo Electrónico')" class="text-[10px] uppercase font-black tracking-widest text-slate-400 mb-2" />
+            <x-text-input wire:model="email" id="email" class="block w-full bg-slate-50 p-4 rounded-2xl border-slate-200" type="email" name="email" required autofocus placeholder="ejemplo@softlinkia.com" />
             <x-input-error :messages="$errors->get('email')" class="mt-2" />
         </div>
 
-        <div class="flex items-center justify-end mt-4">
-            <x-primary-button>
-                {{ __('Email Password Reset Link') }}
+        <div class="pt-4">
+            <x-primary-button class="w-full justify-center">
+                {{ __('Enviar Enlace de Recuperación') }}
             </x-primary-button>
+        </div>
+
+        <div class="text-center mt-8">
+            <a href="{{ route('login') }}" wire:navigate class="text-[10px] font-black uppercase tracking-widest text-indigo-600 hover:text-indigo-700 transition-colors">
+                Volver al inicio de sesión
+            </a>
         </div>
     </form>
 </div>

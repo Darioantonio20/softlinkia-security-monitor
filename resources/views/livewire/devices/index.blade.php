@@ -200,12 +200,12 @@ new class extends Component {
             
             <!-- Directional Controls -->
             <button @click="scroll(-1)" x-show="!scrolledLeft" x-transition 
-                    class="absolute left-4 top-1/2 -translate-y-1/2 z-50 p-4 bg-indigo-600 text-white rounded-2xl shadow-[0_10px_30px_-5px_rgba(79,70,229,0.5)] border border-indigo-400 hover:bg-indigo-700 hover:scale-110 transition-all duration-300 group">
+                    class="absolute left-4 top-1/2 -translate-y-1/2 z-50 p-4 bg-indigo-600 text-white rounded-2xl shadow-md border border-indigo-400 hover:bg-indigo-700 transition-colors duration-300 group">
                 <svg class="w-6 h-6 group-active:-translate-x-1 transition-transform" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="3" d="M15 19l-7-7 7-7"/></svg>
             </button>
             
             <button @click="scroll(1)" x-show="!scrolledRight" x-transition 
-                    class="absolute right-4 top-1/2 -translate-y-1/2 z-50 p-4 bg-indigo-600 text-white rounded-2xl shadow-[0_10px_30px_-5px_rgba(79,70,229,0.5)] border border-indigo-400 hover:bg-indigo-700 hover:scale-110 transition-all duration-300 group">
+                    class="absolute right-4 top-1/2 -translate-y-1/2 z-50 p-4 bg-indigo-600 text-white rounded-2xl shadow-md border border-indigo-400 hover:bg-indigo-700 transition-colors duration-300 group">
                 <svg class="w-6 h-6 group-active:translate-x-1 transition-transform" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="3" d="M9 5l7 7-7 7"/></svg>
             </button>
 
@@ -216,7 +216,7 @@ new class extends Component {
                         <th class="px-6 py-5 text-center text-[10px] font-black text-slate-500 uppercase tracking-[0.2em]">Dispositivo de Seguridad</th>
                         <th class="px-6 py-5 text-center text-[10px] font-black text-slate-500 uppercase tracking-[0.2em]">Especificaciones</th>
                         <th class="px-6 py-5 text-center text-[10px] font-black text-slate-500 uppercase tracking-[0.2em]">Localización</th>
-                        <th class="px-6 py-5 text-center text-[10px] font-black text-slate-500 uppercase tracking-[0.2em]">Salud del Equipo</th>
+                        <th class="px-6 py-5 text-center text-[10px] font-black text-slate-500 uppercase tracking-[0.2em]">Estado</th>
                         <th class="px-6 py-5 text-center text-[10px] font-black text-slate-500 uppercase tracking-[0.2em]">Propietario</th>
                         <th class="px-6 py-5 text-center text-[10px] font-black text-slate-500 uppercase tracking-[0.2em]">Gestión</th>
                     </tr>
@@ -226,7 +226,7 @@ new class extends Component {
                         <tr class="hover:bg-indigo-50/30 transition-all group">
                             <td class="px-6 py-6 whitespace-nowrap text-left border-r border-slate-50/50">
                                 <div class="flex items-center">
-                                    <div class="p-2.5 bg-indigo-600 text-white rounded-xl mr-4 shadow-lg shadow-indigo-200 group-hover:scale-110 transition-transform">
+                                    <div class="p-2.5 bg-indigo-600 text-white rounded-xl mr-4 shadow-sm">
                                         <svg class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M9 3v2m6-2v2M9 19v2m6-2v2M5 9H3m2 6H3m18-6h-2m2 6h-2M7 19h10a2 2 0 002-2V7a2 2 0 00-2-2H7a2 2 0 00-2 2v10a2 2 0 002 2z" /></svg>
                                     </div>
                                     <span class="text-[14px] font-black text-slate-900 tracking-tight">{{ $device->name }}</span>
@@ -280,10 +280,10 @@ new class extends Component {
                                     </div>
         
                                     @can('gestionar dispositivos')
-                                        <button wire:click="edit({{ $device->id }})" class="p-2.5 text-indigo-600 hover:text-white hover:bg-indigo-600 rounded-xl border border-indigo-200 transition-all shadow-sm hover:-translate-y-0.5">
+                                        <button wire:click="edit({{ $device->id }})" class="p-2.5 text-indigo-600 hover:text-white hover:bg-indigo-600 rounded-xl border border-indigo-100 transition-all duration-500">
                                             <svg class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M15.232 5.232l3.536 3.536m-2.036-5.036a2.5 2.5 0 113.536 3.536L6.5 21.036H3v-3.572L16.732 3.732z" /></svg>
                                         </button>
-                                        <button wire:click="delete({{ $device->id }})" wire:confirm="¿Estás seguro?" class="p-2.5 text-rose-600 hover:text-white hover:bg-rose-600 rounded-xl border border-rose-200 transition-all shadow-sm hover:-translate-y-0.5">
+                                        <button wire:click="delete({{ $device->id }})" wire:confirm="¿Estás seguro?" class="p-2.5 text-rose-600 hover:text-white hover:bg-rose-600 rounded-xl border border-rose-100 transition-all duration-500">
                                             <svg class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" /></svg>
                                         </button>
                                     @endcan
@@ -385,7 +385,7 @@ new class extends Component {
         </div>
         
         <div class="px-10 py-8 bg-slate-50/50 backdrop-blur-md border-t border-slate-100">
-            {{ $devices->links() }}
+            {{ $devices->links('components.pagination-premium') }}
         </div>
     </div>
 
@@ -405,7 +405,7 @@ new class extends Component {
                             <div class="p-2 bg-indigo-600 text-white rounded-xl shadow-lg shadow-indigo-200">
                                 <svg class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M12 4v16m8-8H4"/></svg>
                             </div>
-                            {{ $editingDevice ? 'Configurar Dispositivo' : 'Nuevo Dispositivo' }}
+                            {{ $editingDevice ? 'Editar Dispositivo' : 'Nuevo Dispositivo' }}
                         </h3>
                         <p class="mt-2 text-[11px] font-bold text-gray-400 uppercase tracking-widest">Complete los detalles técnicos del equipo</p>
                     </div>
@@ -420,13 +420,13 @@ new class extends Component {
 
                             <div>
                                 <label class="block text-[10px] font-black text-gray-400 uppercase tracking-[0.2em] mb-2 px-1">Categoría</label>
-                                <input wire:model="type" type="text" class="w-full bg-white/50 border-gray-200 rounded-2xl focus:ring-2 focus:ring-indigo-500/20 focus:border-indigo-500 p-3.5 font-bold transition-all" placeholder="Ej: CCTV">
+                                <input wire:model="type" type="text" class="w-full bg-white/50 border-gray-200 rounded-2xl focus:ring-2 focus:ring-indigo-500/20 focus:border-indigo-500 p-3.5 font-bold transition-all" placeholder="Ej: Cámara">
                                 @error('type') <span class="mt-1 text-rose-500 text-[10px] font-black uppercase tracking-tight px-1">{{ $message }}</span> @enderror
                             </div>
 
                             <div>
                                 <label class="block text-[10px] font-black text-gray-400 uppercase tracking-[0.2em] mb-2 px-1">Ubicación</label>
-                                <input wire:model="location" type="text" class="w-full bg-white/50 border-gray-200 rounded-2xl focus:ring-2 focus:ring-indigo-500/20 focus:border-indigo-500 p-3.5 font-bold transition-all" placeholder="Ej: Planta 1">
+                                <input wire:model="location" type="text" class="w-full bg-white/50 border-gray-200 rounded-2xl focus:ring-2 focus:ring-indigo-500/20 focus:border-indigo-500 p-3.5 font-bold transition-all" placeholder="Ej: Entrada Principal">
                                 @error('location') <span class="mt-1 text-rose-500 text-[10px] font-black uppercase tracking-tight px-1">{{ $message }}</span> @enderror
                             </div>
 
