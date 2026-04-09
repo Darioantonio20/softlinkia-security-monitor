@@ -21,7 +21,9 @@ class AppServiceProvider extends ServiceProvider
      */
     public function boot(): void
     {
-        URL::forceScheme('https');
+        if (app()->environment('production')) {
+            URL::forceScheme('https');
+        }
         \App\Models\DeviceEvent::observe(\App\Observers\DeviceEventObserver::class);
     }
 }
