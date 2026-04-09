@@ -130,6 +130,19 @@ new class extends Component {
             </select>
         </div>
 
+        @hasrole(['Administrador', 'Operador'])
+        <div class="flex gap-4">
+            <a href="{{ route('reports.devices.pdf') }}" class="inline-flex items-center px-6 py-4 bg-slate-900 text-white rounded-[1.5rem] font-black text-[10px] uppercase tracking-[0.2em] shadow-lg hover:-translate-y-1 transition-all">
+                <svg class="w-4 h-4 mr-2" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="3"><path stroke-linecap="round" stroke-linejoin="round" d="M12 10v6m0 0l-3-3m3 3l3-3m2 8H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"/></svg>
+                PDF
+            </a>
+            <a href="{{ route('reports.devices.csv') }}" class="inline-flex items-center px-6 py-4 bg-white border border-slate-200 text-slate-700 rounded-[1.5rem] font-black text-[10px] uppercase tracking-[0.2em] shadow-sm hover:-translate-y-1 transition-all">
+                <svg class="w-4 h-4 mr-2" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="3"><path stroke-linecap="round" stroke-linejoin="round" d="M9 17v-2m3 2v-4m3 4v-6m2 10H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"/></svg>
+                CSV
+            </a>
+        </div>
+        @endhasrole
+
         @can('crear dispositivos')
         <button wire:click="openCreate" class="inline-flex items-center px-10 py-4 bg-indigo-600 hover:bg-indigo-700 text-white rounded-[1.5rem] font-black text-[11px] uppercase tracking-[0.2em] shadow-[0_15px_30px_-5px_rgba(79,70,229,0.4)] hover:shadow-[0_20px_40px_-5px_rgba(79,70,229,0.5)] transition-all hover:-translate-y-1 active:scale-95">
             <svg class="w-5 h-5 mr-3" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="3" d="M12 4v16m8-8H4"/></svg>
