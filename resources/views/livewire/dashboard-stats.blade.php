@@ -288,9 +288,6 @@ new class extends Component {
             </div>
         </div>
 
-            </div>
-        </div>
-
         {{-- Panel Central: Gráfica de Tendencias --}}
         <div class="bg-white border border-slate-100 rounded-[2rem] p-8 shadow-sm flex flex-col justify-between">
             <div>
@@ -374,7 +371,6 @@ new class extends Component {
             </div>
         </div>
     </div>
-</div>
 
 <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 <script>
@@ -439,3 +435,4 @@ new class extends Component {
 
     setTimeout(initChart, 500);
 </script>
+</div>

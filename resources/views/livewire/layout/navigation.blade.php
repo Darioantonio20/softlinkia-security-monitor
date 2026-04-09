@@ -48,6 +48,29 @@ new class extends Component
 
             <!-- Settings Dropdown -->
             <div class="hidden sm:flex sm:items-center">
+                
+                {{-- Notificaciones (Campana) --}}
+                <div class="relative mr-4 group">
+                    <button class="relative p-2 text-slate-400 hover:text-indigo-600 hover:bg-indigo-50 rounded-xl transition-all duration-300">
+                        <svg class="w-6 h-6" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                            <path stroke-linecap="round" stroke-linejoin="round" d="M15 17h5l-1.405-1.405A2.032 2.032 0 0118 14.158V11a6.002 6.002 0 00-4-5.659V5a2 2 0 10-4 0v.341C7.67 6.165 6 8.388 6 11v3.159c0 .538-.214 1.055-.595 1.436L4 17h5m6 0v1a3 3 0 11-6 0v-1m6 0H9" />
+                        </svg>
+                        
+                        {{-- Punto Rojo (Indicador LED) --}}
+                        @if(auth()->user()->unreadNotifications->count() > 0)
+                            <span class="absolute top-1.5 right-1.5 flex h-3 w-3">
+                                <span class="animate-ping absolute inline-flex h-full w-full rounded-full bg-rose-400 opacity-75"></span>
+                                <span class="relative inline-flex rounded-full h-3 w-3 bg-rose-500 border-2 border-white"></span>
+                            </span>
+                        @endif
+                    </button>
+                    
+                    {{-- Tooltip rápido --}}
+                    <div class="absolute top-full right-0 mt-2 hidden group-hover:block bg-slate-900 text-white text-[9px] font-black uppercase tracking-widest px-3 py-1.5 rounded-lg shadow-xl whitespace-nowrap z-50 pointer-events-none">
+                        {{ auth()->user()->unreadNotifications->count() }} Alertas nuevas
+                    </div>
+                </div>
+
                 <div class="h-6 w-[1px] bg-slate-100 mx-6"></div>
                 <x-dropdown align="right" width="64">
                     <x-slot name="trigger">

@@ -3,20 +3,15 @@
 use Livewire\Volt\Component;
 use App\Models\Device;
 use App\Models\User;
+use App\Livewire\Forms\DeviceForm;
 use Livewire\WithPagination;
 
 new class extends Component {
     use WithPagination;
 
+    public DeviceForm $form;
     public $search = '';
     public $statusFilter = '';
-
-    // Form fields
-    public $name = '';
-    public $type = '';
-    public $location = '';
-    public $client_id = '';
-    public $status = 'activo';
 
     public $showingModal = false;
     public $editingDevice = null;
@@ -53,61 +48,24 @@ new class extends Component {
 
     public function openCreate()
     {
-        $this->reset(['name', 'type', 'location', 'client_id', 'status', 'editingDevice']);
+        $this->form->reset();
+        $this->editingDevice = null;
         $this->showingModal = true;
     }
 
     public function edit(Device $device)
     {
         $this->editingDevice = $device;
-        $this->name = $device->name;
-        $this->type = $device->type;
-        $this->location = $device->location;
-        $this->client_id = $device->client_id;
-        $this->status = $device->status;
+        $this->form->setDevice($device);
         $this->showingModal = true;
     }
 
     public function save()
     {
-        $this->validate([
-            'name' => 'required|min:3',
-            'type' => 'required',
-            'location' => 'required',
-            'client_id' => 'required|exists:users,id',
-            'status' => 'required|in:activo,inactivo,alerta',
-        ]);
-
         if ($this->editingDevice) {
-            $this->editingDevice->update([
-                'name' => $this->name,
-                'type' => $this->type,
-                'location' => $this->location,
-                'client_id' => $this->client_id,
-                'status' => $this->status,
-            ]);
-
-            \App\Models\AuditLog::create([
-                'user_id' => auth()->id(),
-                'action' => 'DEVICE_UPDATED',
-                'description' => "Se actualizó el dispositivo: {$this->name}",
-                'ip_address' => request()->ip(),
-            ]);
+            $this->form->update();
         } else {
-            $device = Device::create([
-                'name' => $this->name,
-                'type' => $this->type,
-                'location' => $this->location,
-                'client_id' => $this->client_id,
-                'status' => $this->status,
-            ]);
-
-            \App\Models\AuditLog::create([
-                'user_id' => auth()->id(),
-                'action' => 'DEVICE_CREATED',
-                'description' => "Se creó un nuevo dispositivo: {$this->name}",
-                'ip_address' => request()->ip(),
-            ]);
+            $this->form->store();
         }
 
         $this->showingModal = false;
@@ -414,25 +372,25 @@ new class extends Component {
                         <div class="grid grid-cols-2 gap-6">
                             <div class="col-span-2">
                                 <label class="block text-[10px] font-black text-gray-400 uppercase tracking-[0.2em] mb-2 px-1">Identificador / Nombre</label>
-                                <input wire:model="name" type="text" class="w-full bg-white/50 border-gray-200 rounded-2xl focus:ring-2 focus:ring-indigo-500/20 focus:border-indigo-500 p-3.5 font-bold transition-all" placeholder="Ej: Cámara Pasillo Norte">
-                                @error('name') <span class="mt-1 text-rose-500 text-[10px] font-black uppercase tracking-tight px-1">{{ $message }}</span> @enderror
+                                <input wire:model="form.name" type="text" class="w-full bg-white/50 border-gray-200 rounded-2xl focus:ring-2 focus:ring-indigo-500/20 focus:border-indigo-500 p-3.5 font-bold transition-all" placeholder="Ej: Cámara Pasillo Norte">
+                                @error('form.name') <span class="mt-1 text-rose-500 text-[10px] font-black uppercase tracking-tight px-1">{{ $message }}</span> @enderror
                             </div>
 
                             <div>
                                 <label class="block text-[10px] font-black text-gray-400 uppercase tracking-[0.2em] mb-2 px-1">Categoría</label>
-                                <input wire:model="type" type="text" class="w-full bg-white/50 border-gray-200 rounded-2xl focus:ring-2 focus:ring-indigo-500/20 focus:border-indigo-500 p-3.5 font-bold transition-all" placeholder="Ej: Cámara">
-                                @error('type') <span class="mt-1 text-rose-500 text-[10px] font-black uppercase tracking-tight px-1">{{ $message }}</span> @enderror
+                                <input wire:model="form.type" type="text" class="w-full bg-white/50 border-gray-200 rounded-2xl focus:ring-2 focus:ring-indigo-500/20 focus:border-indigo-500 p-3.5 font-bold transition-all" placeholder="Ej: Cámara">
+                                @error('form.type') <span class="mt-1 text-rose-500 text-[10px] font-black uppercase tracking-tight px-1">{{ $message }}</span> @enderror
                             </div>
 
                             <div>
                                 <label class="block text-[10px] font-black text-gray-400 uppercase tracking-[0.2em] mb-2 px-1">Ubicación</label>
-                                <input wire:model="location" type="text" class="w-full bg-white/50 border-gray-200 rounded-2xl focus:ring-2 focus:ring-indigo-500/20 focus:border-indigo-500 p-3.5 font-bold transition-all" placeholder="Ej: Entrada Principal">
-                                @error('location') <span class="mt-1 text-rose-500 text-[10px] font-black uppercase tracking-tight px-1">{{ $message }}</span> @enderror
+                                <input wire:model="form.location" type="text" class="w-full bg-white/50 border-gray-200 rounded-2xl focus:ring-2 focus:ring-indigo-500/20 focus:border-indigo-500 p-3.5 font-bold transition-all" placeholder="Ej: Entrada Principal">
+                                @error('form.location') <span class="mt-1 text-rose-500 text-[10px] font-black uppercase tracking-tight px-1">{{ $message }}</span> @enderror
                             </div>
 
                             <div>
                                 <label class="block text-[10px] font-black text-gray-400 uppercase tracking-[0.2em] mb-2 px-1">Estado Operativo</label>
-                                <select wire:model="status" class="w-full bg-white/50 border-gray-200 rounded-2xl focus:ring-2 focus:ring-indigo-500/20 focus:border-indigo-500 p-3.5 font-bold transition-all">
+                                <select wire:model="form.status" class="w-full bg-white/50 border-gray-200 rounded-2xl focus:ring-2 focus:ring-indigo-500/20 focus:border-indigo-500 p-3.5 font-bold transition-all">
                                     <option value="activo">Activo</option>
                                     <option value="inactivo">Inactivo</option>
                                     <option value="alerta">Alerta</option>
@@ -441,13 +399,13 @@ new class extends Component {
 
                             <div>
                                 <label class="block text-[10px] font-black text-gray-400 uppercase tracking-[0.2em] mb-2 px-1">Cliente Responsable</label>
-                                <select wire:model="client_id" class="w-full bg-white/50 border-gray-200 rounded-2xl focus:ring-2 focus:ring-indigo-500/20 focus:border-indigo-500 p-3.5 font-bold transition-all">
+                                <select wire:model="form.client_id" class="w-full bg-white/50 border-gray-200 rounded-2xl focus:ring-2 focus:ring-indigo-500/20 focus:border-indigo-500 p-3.5 font-bold transition-all">
                                     <option value="">Seleccione un cliente</option>
                                     @foreach($clients as $client)
                                         <option value="{{ $client->id }}">{{ $client->name }}</option>
                                     @endforeach
                                 </select>
-                                @error('client_id') <span class="mt-1 text-rose-500 text-[10px] font-black uppercase tracking-tight px-1">{{ $message }}</span> @enderror
+                                @error('form.client_id') <span class="mt-1 text-rose-500 text-[10px] font-black uppercase tracking-tight px-1">{{ $message }}</span> @enderror
                             </div>
                         </div>
 
