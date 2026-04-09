@@ -3,7 +3,7 @@
 namespace App\Listeners;
 
 use Illuminate\Auth\Events\Login;
-use App\Models\AuditLog;
+use App\Jobs\ProcessAuditLog;
 use Illuminate\Support\Facades\Request;
 
 class LogSuccessfulLogin
@@ -13,7 +13,7 @@ class LogSuccessfulLogin
      */
     public function handle(Login $event): void
     {
-        AuditLog::create([
+        ProcessAuditLog::dispatch([
             'user_id' => $event->user->id,
             'action' => 'LOGIN',
             'description' => "El usuario {$event->user->name} ha iniciado sesión en el sistema.",

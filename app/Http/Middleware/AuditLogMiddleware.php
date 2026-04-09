@@ -29,7 +29,7 @@ class AuditLogMiddleware
             if (str_contains($request->path(), 'incidents')) $action = 'GESTION_INCIDENCIAS';
             if (str_contains($request->path(), 'simulate-event')) $action = 'SIMULACION_API';
 
-            AuditLog::create([
+            \App\Jobs\ProcessAuditLog::dispatch([
                 'user_id' => Auth::id(),
                 'action' => $action,
                 'description' => $description,
