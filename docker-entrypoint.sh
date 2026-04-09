@@ -32,8 +32,12 @@ done
 echo "Sincronizando esquema de base de datos..."
 php artisan migrate --force --seed
 
-# Limpiar cachés para evitar errores 500 de rutas/config desactualizadas
-echo "Limpiando cachés de sistema..."
+# Limpiar cachés para evitar errores 500
+echo "Limpiando y preparando carpetas de sistema..."
+mkdir -p storage/framework/sessions storage/framework/views storage/framework/cache bootstrap/cache
+chmod -R 775 storage bootstrap/cache
+chown -R www-data:www-data storage bootstrap/cache
+
 php artisan config:clear
 php artisan route:clear
 php artisan view:clear
