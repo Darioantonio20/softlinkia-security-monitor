@@ -1,6 +1,6 @@
 FROM php:8.2-fpm
 
-# Instalar dependencias del sistema y NGINX
+# Instalar dependencias del sistema, NGINX y NODEJS
 RUN apt-get update && apt-get install -y \
     git \
     curl \
@@ -10,7 +10,11 @@ RUN apt-get update && apt-get install -y \
     zip \
     unzip \
     libzip-dev \
-    nginx
+    nginx \
+    gnupg
+
+# Instalar Node.js para compilar assets
+RUN curl -fsSL https://deb.nodesource.com/setup_20.x | bash - && apt-get install -y nodejs
 
 # Limpiar cache
 RUN apt-get clean && rm -rf /var/lib/apt/lists/*
@@ -27,19 +31,21 @@ WORKDIR /var/www
 # Copiar archivos del proyecto
 COPY . .
 
-# Copiar configuración de Nginx para Docker
+# Instalar dependencias de PHP
+RUN composer install --no-interaction --optimize-autoloader --no-dev
+
+# INSTALAR Y COMPILAR ASSETS (Vite)
+RUN npm install
+RUN npm run build
+
+# Configuración de Nginx
 COPY docker/nginx/conf.d/app.conf /etc/nginx/sites-available/default
 RUN ln -sf /etc/nginx/sites-available/default /etc/nginx/sites-enabled/default
 
-# Instalar dependencias con permisos adecuados
-RUN composer install --no-interaction --optimize-autoloader --no-dev
+# Permisos
 RUN chown -R www-data:www-data /var/www/storage /var/www/bootstrap/cache
-
-# Dar permisos de ejecución al script de entrada
 RUN chmod +x /var/www/docker-entrypoint.sh
 
-# Exponer el puerto que Railway espera (80 por defecto en Nginx)
 EXPOSE 80
 
-# Usar el script de entrada
 ENTRYPOINT ["/var/www/docker-entrypoint.sh"]
