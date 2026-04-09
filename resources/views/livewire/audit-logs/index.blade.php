@@ -36,39 +36,42 @@ new class extends Component {
         <label for="search" class="block text-[10px] font-black text-slate-400 uppercase tracking-[0.3em] mb-4 ml-1">
             Herramienta de Búsqueda
         </label>
-        <div class="relative max-w-2xl group group-search">
-            <!-- Search Icon -->
-            <div class="absolute inset-y-0 left-0 pl-6 flex items-center pointer-events-none">
-                <svg class="h-5 w-5 text-slate-400 group-focus-within:text-indigo-600 transition-colors" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"/>
-                </svg>
-            </div>
-            
-            <!-- Input -->
-            <input wire:model.live="search" type="text" id="search"
-                   placeholder="Escribe el nombre del operador, acción o descripción..." 
-                   class="w-full pl-14 pr-12 py-4 bg-white border border-slate-200 rounded-3xl shadow-sm focus:ring-4 focus:ring-indigo-500/10 focus:border-indigo-500 transition-all text-sm font-bold text-slate-800 placeholder-slate-400">
-            
-            <!-- Loading Spinner (Livewire) -->
-            <div wire:loading wire:target="search" class="absolute inset-y-0 right-4 flex items-center pr-2">
-                <svg class="animate-spin h-5 w-5 text-indigo-500" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
-                    <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
-                    <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
-                </svg>
+        <div class="flex flex-col lg:flex-row gap-6 items-start lg:items-center">
+            <div class="relative max-w-2xl flex-1 group group-search w-full">
+                <!-- Search Icon -->
+                <div class="absolute inset-y-0 left-0 pl-6 flex items-center pointer-events-none">
+                    <svg class="h-5 w-5 text-slate-400 group-focus-within:text-indigo-600 transition-colors" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"/>
+                    </svg>
+                </div>
+                
+                <!-- Input -->
+                <input wire:model.live="search" type="text" id="search"
+                       placeholder="Escriba el nombre del operador, acción o descripción..." 
+                       class="w-full pl-14 pr-12 py-4 bg-white border border-slate-200 rounded-3xl shadow-sm focus:ring-4 focus:ring-indigo-500/10 focus:border-indigo-500 transition-all text-sm font-bold text-slate-800 placeholder-slate-400">
+                
+                <!-- Loading Spinner (Livewire) -->
+                <div wire:loading wire:target="search" class="absolute inset-y-0 right-4 flex items-center pr-2">
+                    <svg class="animate-spin h-5 w-5 text-indigo-500" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+                        <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
+                        <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+                    </svg>
+                </div>
             </div>
 
-            <!-- Clear Button -->
-            @if($search)
-                <button wire:click="$set('search', '')" wire:loading.remove wire:target="search"
-                        class="absolute inset-y-0 right-4 flex items-center pr-2 text-slate-400 hover:text-rose-500 transition-colors">
-                    <svg class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M6 18L18 6M6 6l12 12" />
-                    </svg>
-                </button>
-            @endif
+            <div class="flex gap-4">
+                <a href="{{ route('reports.audit.pdf') }}" class="inline-flex items-center px-10 py-4 bg-slate-900 text-white rounded-[1.5rem] font-black text-[10px] uppercase tracking-[0.2em] shadow-lg hover:-translate-y-1 transition-all">
+                    <svg class="w-4 h-4 mr-2" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="3"><path stroke-linecap="round" stroke-linejoin="round" d="M12 10v6m0 0l-3-3m3 3l3-3m2 8H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"/></svg>
+                    PDF
+                </a>
+                <a href="{{ route('reports.audit.csv') }}" class="inline-flex items-center px-10 py-4 bg-white border border-slate-200 text-slate-700 rounded-[1.5rem] font-black text-[10px] uppercase tracking-[0.2em] shadow-sm hover:-translate-y-1 transition-all">
+                    <svg class="w-4 h-4 mr-2" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="3"><path stroke-linecap="round" stroke-linejoin="round" d="M9 17v-2m3 2v-4m3 4v-6m2 10H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"/></svg>
+                    CSV
+                </a>
+            </div>
         </div>
-        <p class="mt-3 text-[10px] font-bold text-slate-400 ml-1">
-            <span class="text-indigo-600">Tip:</span> La lista se filtra automáticamente mientras escribes.
+        <p class="mt-4 text-[10px] font-bold text-slate-400 ml-1">
+            <span class="text-indigo-600">Protocolo SOC:</span> Se exportarán todos los registros históricos de la bitácora técnica.
         </p>
     </div>
 

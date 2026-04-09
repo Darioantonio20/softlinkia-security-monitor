@@ -10,3 +10,7 @@ Route::get('/user', function (Request $request) {
 
 // Endpoint de Simulación Externa (Módulo 3)
 Route::post('/simulate-event', [EventController::class, 'simulate']);
+
+// Recursos REST (Extras valorados)
+Route::get('/devices', [\App\Http\Controllers\Api\DeviceController::class, 'index']);
+Route::get('/incidents', [\App\Http\Controllers\Api\IncidentController::class, 'index']);
