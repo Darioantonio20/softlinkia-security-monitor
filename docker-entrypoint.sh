@@ -28,9 +28,15 @@ while [ $COUNT -lt $MAX_TRIES ]; do
     COUNT=$((COUNT+1))
 done
 
+# Validar APP_KEY
+if [ -z "$APP_KEY" ]; then
+    echo "APP_KEY no detectada. Generando una temporal..."
+    php artisan key:generate --force
+fi
+
 # Procesos de despliegue
 echo "Sincronizando esquema de base de datos..."
-php artisan migrate --force --seed
+php artisan migrate --force --seed || echo "Aviso: Error en la migración, continuando de todas formas..."
 
 # Limpiar cachés para evitar errores 500
 echo "Limpiando y preparando carpetas de sistema..."
