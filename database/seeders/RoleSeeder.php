@@ -15,51 +15,65 @@ class RoleSeeder extends Seeder
     public function run(): void
     {
         // Crear Permisos Base
-        Permission::create(['name' => 'ver dashboard']);
-        Permission::create(['name' => 'gestionar dispositivos']);
-        Permission::create(['name' => 'simular eventos']);
-        Permission::create(['name' => 'gestionar incidencias']);
-        Permission::create(['name' => 'ver auditoria']);
+        $permissions = [
+            'ver dashboard',
+            'gestionar dispositivos',
+            'simular eventos',
+            'gestionar incidencias',
+            'ver auditoria',
+        ];
+
+        foreach ($permissions as $permission) {
+            Permission::firstOrCreate(['name' => $permission]);
+        }
 
         // Crear Roles
-        $admin = Role::create(['name' => 'Administrador']);
-        $operador = Role::create(['name' => 'Operador']);
-        $cliente = Role::create(['name' => 'Cliente']);
+        $admin = Role::firstOrCreate(['name' => 'Administrador']);
+        $operador = Role::firstOrCreate(['name' => 'Operador']);
+        $cliente = Role::firstOrCreate(['name' => 'Cliente']);
 
         // Asignar Permisos a Roles
-        $admin->givePermissionTo(Permission::all());
+        $admin->syncPermissions(Permission::all());
         
-        $operador->givePermissionTo([
+        $operador->syncPermissions([
             'ver dashboard',
             'gestionar dispositivos',
             'simular eventos',
             'gestionar incidencias'
         ]);
 
-        $cliente->givePermissionTo([
+        $cliente->syncPermissions([
             'ver dashboard'
         ]);
 
         // Crear Usuarios de Prueba
-        $userAdmin = User::factory()->create([
-            'name' => 'Administrador Softlinkia',
-            'email' => 'admin@softlinkia.com',
-            'password' => bcrypt('password'),
-        ]);
-        $userAdmin->assignRole($admin);
+        $users = [
+            [
+                'name' => 'Administrador Softlinkia',
+                'email' => 'admin@softlinkia.com',
+                'role' => 'Administrador',
+            ],
+            [
+                'name' => 'Operador Softlinkia',
+                'email' => 'operador@softlinkia.com',
+                'role' => 'Operador',
+            ],
+            [
+                'name' => 'Cliente Softlinkia',
+                'email' => 'cliente@softlinkia.com',
+                'role' => 'Cliente',
+            ],
+        ];
 
-        $userOperador = User::factory()->create([
-            'name' => 'Operador Softlinkia',
-            'email' => 'operador@softlinkia.com',
-            'password' => bcrypt('password'),
-        ]);
-        $userOperador->assignRole($operador);
-
-        $userCliente = User::factory()->create([
-            'name' => 'Cliente Softlinkia',
-            'email' => 'cliente@softlinkia.com',
-            'password' => bcrypt('password'),
-        ]);
-        $userCliente->assignRole($cliente);
+        foreach ($users as $userData) {
+            $user = User::updateOrCreate(
+                ['email' => $userData['email']],
+                [
+                    'name' => $userData['name'],
+                    'password' => bcrypt('password'),
+                ]
+            );
+            $user->syncRoles([$userData['role']]);
+        }
     }
 }

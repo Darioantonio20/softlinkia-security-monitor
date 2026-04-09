@@ -24,7 +24,9 @@ class IncidentSeeder extends Seeder
             'Patrón de movimiento no identificado en horario no laboral.'
         ];
 
-        // Crear 25 incidencias aleatorias
+        // Crear 25 incidencias aleatorias si la tabla está vacía
+        if (Incident::count() >= 25) return;
+
         foreach (range(1, 25) as $index) {
             $device = $devices->random();
             $status = $statuses[array_rand($statuses)];
