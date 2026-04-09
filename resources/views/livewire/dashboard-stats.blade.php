@@ -71,6 +71,23 @@ new class extends Component {
             ]
         ];
     }
+
+    public function simulateRandomEvent()
+    {
+        $device = Device::inRandomOrder()->first();
+        if (!$device) return;
+
+        $types = ['Desconexión de Red', 'Intento de Acceso Fallido', 'Movimiento Detectado', 'Alerta de Temperatura', 'Batería Crítica'];
+        $type = $types[array_rand($types)];
+
+        DeviceEvent::create([
+            'device_id' => $device->id,
+            'type' => $type,
+            'timestamp' => now(),
+        ]);
+
+        $this->dispatch('notify', "Simulación: Nuevo evento registrado en {$device->name}");
+    }
 }; ?>
 
 <div wire:poll.30s>
@@ -115,6 +132,14 @@ new class extends Component {
                 Limpiar
             </button>
             @endif
+
+            @can('simular eventos')
+            <button wire:click="simulateRandomEvent"
+                    class="flex items-center gap-2.5 px-6 py-2.5 text-[11px] font-black uppercase tracking-widest text-white bg-indigo-600 rounded-2xl hover:bg-indigo-700 shadow-lg shadow-indigo-200 transition-all active:scale-95">
+                <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="3"><path stroke-linecap="round" stroke-linejoin="round" d="M13 10V3L4 14h7v7l9-11h-7z"/></svg>
+                Simular Alerta
+            </button>
+            @endcan
         </div>
     </div>
 

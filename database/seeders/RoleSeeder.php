@@ -17,9 +17,15 @@ class RoleSeeder extends Seeder
         // Crear Permisos Base
         $permissions = [
             'ver dashboard',
-            'gestionar dispositivos',
+            'ver dispositivos',
+            'crear dispositivos',
+            'editar dispositivos',
+            'eliminar dispositivos',
             'simular eventos',
-            'gestionar incidencias',
+            'ver incidencias',
+            'crear incidencias',
+            'editar incidencias',
+            'eliminar incidencias',
             'ver auditoria',
         ];
 
@@ -37,13 +43,19 @@ class RoleSeeder extends Seeder
         
         $operador->syncPermissions([
             'ver dashboard',
-            'gestionar dispositivos',
+            'ver dispositivos',
+            'crear dispositivos',
+            'editar dispositivos',
             'simular eventos',
-            'gestionar incidencias'
+            'ver incidencias',
+            'crear incidencias',
+            'editar incidencias'
         ]);
 
         $cliente->syncPermissions([
-            'ver dashboard'
+            'ver dashboard',
+            'ver dispositivos',
+            'ver incidencias',
         ]);
 
         // Crear Usuarios de Prueba
