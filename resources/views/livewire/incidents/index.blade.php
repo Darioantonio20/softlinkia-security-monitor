@@ -194,7 +194,7 @@ new class extends Component {
             </select>
         </div>
 
-        @can('gestionar incidencias')
+        @can('crear incidencias')
         <button wire:click="openManualCreate" class="inline-flex items-center px-10 py-4 bg-gradient-to-r from-rose-600 to-rose-700 hover:from-rose-500 hover:to-rose-600 text-white rounded-[1.5rem] font-black text-[11px] uppercase tracking-[0.2em] shadow-[0_15px_30px_-5px_rgba(225,29,72,0.4)] hover:shadow-[0_20px_40px_-5px_rgba(225,29,72,0.5)] transition-all hover:-translate-y-1 active:scale-95">
             <svg class="w-5 h-5 mr-3" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="3" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z" /></svg>
             Despachar Incidencia
@@ -270,21 +270,23 @@ new class extends Component {
                             </td>
                             <td class="px-6 py-6 whitespace-nowrap text-center">
                                 <div class="flex justify-center gap-2">
-                                    @if($incident->status !== 'resuelto')
-                                        <button wire:click="updateStatus({{ $incident->id }}, 'en proceso')" 
-                                                class="px-4 py-2 text-[9px] font-black uppercase tracking-widest text-white bg-slate-900 rounded-xl hover:bg-slate-800 transition-all shadow-lg hover:-translate-y-0.5">
-                                            Asumir
-                                        </button>
-                                        <button wire:click="updateStatus({{ $incident->id }}, 'resuelto')" 
-                                                class="px-4 py-2 text-[9px] font-black uppercase tracking-widest text-white bg-emerald-600 rounded-xl hover:bg-emerald-500 transition-all shadow-md">
-                                            Cerrar
-                                        </button>
-                                    @else
-                                        <div class="flex items-center gap-1.5 text-emerald-700 font-black text-[9px] uppercase tracking-widest bg-emerald-100/50 py-2 px-4 rounded-xl border border-emerald-200/50">
-                                            <svg class="w-3.5 h-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="3" d="M5 13l4 4L19 7"/></svg>
-                                            Finalizado
-                                        </div>
-                                    @endif
+                                    @can('editar incidencias')
+                                        @if($incident->status !== 'resuelto')
+                                            <button wire:click="updateStatus({{ $incident->id }}, 'en proceso')" 
+                                                    class="px-4 py-2 text-[9px] font-black uppercase tracking-widest text-white bg-slate-900 rounded-xl hover:bg-slate-800 transition-all shadow-lg hover:-translate-y-0.5">
+                                                Asumir
+                                            </button>
+                                            <button wire:click="updateStatus({{ $incident->id }}, 'resuelto')" 
+                                                    class="px-4 py-2 text-[9px] font-black uppercase tracking-widest text-white bg-emerald-600 rounded-xl hover:bg-emerald-500 transition-all shadow-md">
+                                                Cerrar
+                                            </button>
+                                        @else
+                                            <div class="flex items-center gap-1.5 text-emerald-700 font-black text-[9px] uppercase tracking-widest bg-emerald-100/50 py-2 px-4 rounded-xl border border-emerald-200/50">
+                                                <svg class="w-3.5 h-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="3" d="M5 13l4 4L19 7"/></svg>
+                                                Finalizado
+                                            </div>
+                                        @endif
+                                    @endcan
 
                                     <button wire:click="viewHistory({{ $incident->id }})" 
                                             class="p-2 text-indigo-600 hover:bg-indigo-50 rounded-xl transition-all"
@@ -341,20 +343,22 @@ new class extends Component {
                     </div>
 
                     <div class="flex gap-3">
-                        @if($incident->status !== 'resuelto')
-                            <button wire:click="updateStatus({{ $incident->id }}, 'en proceso')" 
-                                    class="flex-1 py-3.5 text-[10px] font-black uppercase tracking-widest text-white bg-slate-900 rounded-2xl shadow-lg active:scale-95 transition-all">
-                                Asumir
-                            </button>
-                            <button wire:click="updateStatus({{ $incident->id }}, 'resuelto')" 
-                                    class="flex-1 py-3.5 text-[10px] font-black uppercase tracking-widest text-white bg-emerald-600 rounded-2xl shadow-lg active:scale-95 transition-all">
-                                Cerrar
-                            </button>
-                        @else
-                            <div class="w-full text-center py-3.5 text-[10px] font-black uppercase tracking-widest text-emerald-700 bg-emerald-50 rounded-2xl border border-emerald-100">
-                                Finalizado
-                            </div>
-                        @endif
+                        @can('editar incidencias')
+                            @if($incident->status !== 'resuelto')
+                                <button wire:click="updateStatus({{ $incident->id }}, 'en proceso')" 
+                                        class="flex-1 py-3.5 text-[10px] font-black uppercase tracking-widest text-white bg-slate-900 rounded-2xl shadow-lg active:scale-95 transition-all">
+                                    Asumir
+                                </button>
+                                <button wire:click="updateStatus({{ $incident->id }}, 'resuelto')" 
+                                        class="flex-1 py-3.5 text-[10px] font-black uppercase tracking-widest text-white bg-emerald-600 rounded-2xl shadow-lg active:scale-95 transition-all">
+                                    Cerrar
+                                </button>
+                            @else
+                                <div class="w-full text-center py-3.5 text-[10px] font-black uppercase tracking-widest text-emerald-700 bg-emerald-50 rounded-2xl border border-emerald-100">
+                                    Finalizado
+                                </div>
+                            @endif
+                        @endcan
                         
                         <button wire:click="viewHistory({{ $incident->id }})" class="p-3.5 bg-slate-100 text-slate-500 rounded-2xl border border-slate-200 shadow-sm active:scale-90">
                             <svg class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.5"><path stroke-linecap="round" stroke-linejoin="round" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" /></svg>
