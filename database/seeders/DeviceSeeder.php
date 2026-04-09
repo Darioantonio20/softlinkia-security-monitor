@@ -20,18 +20,20 @@ class DeviceSeeder extends Seeder
         // Crear 40 dispositivos aleatorios
         for ($i = 1; $i <= 40; $i++) {
             $type = $types[array_rand($types)];
-            Device::create([
-                'name' => "$type " . str_pad($i, 2, '0', STR_PAD_LEFT),
-                'type' => $type,
-                'status' => $statuses[array_rand($statuses)],
-                'location' => $locations[array_rand($locations)],
-                'metadata' => [
-                    'ip' => '192.168.1.' . (50 + $i),
-                    'firmware' => 'v' . rand(1, 3) . '.' . rand(0, 9),
-                    'uptime' => rand(90, 100) . '%',
-                ],
-                'client_id' => $cliente->id,
-            ]);
+            Device::updateOrCreate(
+                ['name' => "$type " . str_pad($i, 2, '0', STR_PAD_LEFT)],
+                [
+                    'type' => $type,
+                    'status' => $statuses[array_rand($statuses)],
+                    'location' => $locations[array_rand($locations)],
+                    'metadata' => [
+                        'ip' => '192.168.1.' . (50 + $i),
+                        'firmware' => 'v' . rand(1, 3) . '.' . rand(0, 9),
+                        'uptime' => rand(90, 100) . '%',
+                    ],
+                    'client_id' => $cliente->id,
+                ]
+            );
         }
     }
 }

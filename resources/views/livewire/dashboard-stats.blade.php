@@ -46,6 +46,12 @@ new class extends Component {
 
         $healthRate = $totalDevices > 0 ? round(($activeDevices / $totalDevices) * 100) : 0;
 
+        // Datos para la gráfica (últimos 7 días)
+        $days = collect(range(0, 6))->map(fn($i) => now()->subDays($i)->format('Y-m-d'))->reverse();
+        $incidentCounts = $days->map(fn($date) => 
+            Incident::whereDate('created_at', $date)->count()
+        );
+
         return [
             'totalDevices' => $totalDevices,
             'activeIncidents' => $incidentsQuery->count(),
@@ -53,6 +59,10 @@ new class extends Component {
             'recentEvents' => $eventsQuery->latest()->take(10)->with(['device.client'])->get(),
             'clients' => User::role('Cliente')->get(),
             'deviceTypes' => Device::distinct()->pluck('type'),
+            'chartData' => [
+                'labels' => $days->map(fn($d) => date('d M', strtotime($d)))->values(),
+                'values' => $incidentCounts->values(),
+            ],
             'stats' => [
                 'active' => $activeDevices,
                 'alert' => $alertDevicesCount,
@@ -205,7 +215,7 @@ new class extends Component {
     </div>
 
     {{-- ════ MAIN GRID ════════════════════════════════════════════ --}}
-    <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
+    <div class="grid grid-cols-1 lg:grid-cols-4 gap-6">
 
         {{-- Panel izquierdo: Distribución --}}
         <div class="bg-white border border-slate-100 rounded-[2rem] p-8 shadow-sm">
@@ -278,6 +288,25 @@ new class extends Component {
             </div>
         </div>
 
+            </div>
+        </div>
+
+        {{-- Panel Central: Gráfica de Tendencias --}}
+        <div class="bg-white border border-slate-100 rounded-[2rem] p-8 shadow-sm flex flex-col justify-between">
+            <div>
+                <p class="text-[10px] font-black text-slate-400 uppercase tracking-[0.35em] mb-0.5">Analítica</p>
+                <p class="text-base font-black text-slate-900 mb-6">Tendencia de Incidentes (7d)</p>
+            </div>
+            
+            <div class="flex-1 min-h-[200px] relative">
+                <canvas id="incidentChart"></canvas>
+            </div>
+
+            <div class="mt-4 pt-4 border-t border-slate-50">
+                <p class="text-[10px] text-slate-400 font-medium">Actualizado en tiempo real vía <span class="text-indigo-600 font-bold">Softlinkia Core</span></p>
+            </div>
+        </div>
+
         {{-- Panel derecho: Actividad --}}
         <div class="lg:col-span-2 bg-white border border-slate-100 rounded-[2rem] shadow-sm overflow-hidden flex flex-col">
 
@@ -346,3 +375,67 @@ new class extends Component {
         </div>
     </div>
 </div>
+
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+<script>
+    document.addEventListener('livewire:navigated', () => {
+        initChart();
+    });
+
+    document.addEventListener('livewire:load', () => {
+        initChart();
+    });
+
+    function initChart() {
+        const ctx = document.getElementById('incidentChart');
+        if (!ctx) return;
+
+        let chartStatus = Chart.getChart("incidentChart");
+        if (chartStatus != undefined) {
+            chartStatus.destroy();
+        }
+
+        const labels = @js($chartData['labels']);
+        const values = @js($chartData['values']);
+
+        new Chart(ctx, {
+            type: 'line',
+            data: {
+                labels: labels,
+                datasets: [{
+                    label: 'Incidentes',
+                    data: values,
+                    borderColor: '#4f46e5',
+                    backgroundColor: 'rgba(79, 70, 229, 0.1)',
+                    borderWidth: 4,
+                    fill: true,
+                    tension: 0.4,
+                    pointRadius: 4,
+                    pointBackgroundColor: '#fff',
+                    pointBorderColor: '#4f46e5',
+                    pointBorderWidth: 2
+                }]
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                plugins: {
+                    legend: { display: false }
+                },
+                scales: {
+                    y: {
+                        beginAtZero: true,
+                        grid: { display: false },
+                        ticks: { stepSize: 1, font: { size: 9, weight: 'bold' } }
+                    },
+                    x: {
+                        grid: { display: false },
+                        ticks: { font: { size: 9, weight: 'bold' } }
+                    }
+                }
+            }
+        });
+    }
+
+    setTimeout(initChart, 500);
+</script>
