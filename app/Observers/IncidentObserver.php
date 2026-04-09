@@ -6,6 +6,7 @@ use App\Models\Incident;
 use App\Models\IncidentHistory;
 use App\Models\User;
 use App\Notifications\NewIncidentNotification;
+use App\Jobs\ProcessAuditLog;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Notification;
 
@@ -25,8 +26,8 @@ class IncidentObserver
                 'comments' => 'Cambio de estado automático registrado por el sistema.',
             ]);
 
-            // Auditoría adicional
-            \App\Models\AuditLog::create([
+            // Auditoría adicional asíncrona
+            ProcessAuditLog::dispatch([
                 'action' => 'CAMBIO_ESTADO_INCIDENCIA',
                 'description' => "Incidencia #{$incident->id} cambió de {$incident->getOriginal('status')} a {$incident->status}",
                 'ip_address' => request()->ip(),
