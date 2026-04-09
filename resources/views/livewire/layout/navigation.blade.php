@@ -43,6 +43,13 @@ new class extends Component
                         class="px-5 py-2.5 rounded-xl text-[11px] font-black uppercase tracking-[0.15em] transition-all duration-300 border-none {{ request()->routeIs('incidents') ? 'bg-indigo-50 text-indigo-700 shadow-sm shadow-indigo-100' : 'text-slate-500 hover:text-slate-900 hover:bg-slate-50' }}">
                         {{ __('Incidencias') }}
                     </x-nav-link>
+
+                    @role('Administrador')
+                    <x-nav-link :href="route('audit-logs')" :active="request()->routeIs('audit-logs')" wire:navigate 
+                        class="px-5 py-2.5 rounded-xl text-[11px] font-black uppercase tracking-[0.15em] transition-all duration-300 border-none {{ request()->routeIs('audit-logs') ? 'bg-indigo-50 text-indigo-700 shadow-sm shadow-indigo-100' : 'text-slate-500 hover:text-slate-900 hover:bg-slate-50' }}">
+                        {{ __('Bitácora') }}
+                    </x-nav-link>
+                    @endrole
                 </div>
             </div>
 
@@ -138,6 +145,11 @@ new class extends Component
             <x-responsive-nav-link :href="route('incidents')" :active="request()->routeIs('incidents')" wire:navigate class="rounded-2xl {{ request()->routeIs('incidents') ? 'bg-indigo-50 text-indigo-700' : '' }}">
                 {{ __('Incidencias') }}
             </x-responsive-nav-link>
+            @role('Administrador')
+            <x-responsive-nav-link :href="route('audit-logs')" :active="request()->routeIs('audit-logs')" wire:navigate class="rounded-2xl {{ request()->routeIs('audit-logs') ? 'bg-indigo-50 text-indigo-700' : '' }}">
+                {{ __('Bitácora de Auditoría') }}
+            </x-responsive-nav-link>
+            @endrole
         </div>
 
         <!-- Responsive Settings Options -->

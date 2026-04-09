@@ -13,14 +13,20 @@ class DeviceEventObserver
      */
     public function created(DeviceEvent $deviceEvent): void
     {
-        // Detectar desconexión de forma robusta
-        if (str_contains(strtolower($deviceEvent->type), 'desconex')) {
+        // Detectar eventos críticos (Desconexión, Fallo, Crítico, Intento)
+        $typeLower = strtolower($deviceEvent->type);
+        $isCritical = str_contains($typeLower, 'desconex') || 
+                     str_contains($typeLower, 'critico') || 
+                     str_contains($typeLower, 'fallo') ||
+                     str_contains($typeLower, 'movimiento');
+
+        if ($isCritical) {
             try {
                 Incident::create([
                     'device_id' => $deviceEvent->device_id,
-                    'type' => 'desconexión detectada',
+                    'type' => $deviceEvent->type,
                     'status' => 'pendiente',
-                    'description' => 'El dispositivo reportó una desconexión automática a las ' . $deviceEvent->timestamp,
+                    'description' => "Protocolo automático activado por: {$deviceEvent->type} reporte a las {$deviceEvent->timestamp}",
                 ]);
 
                 \App\Models\AuditLog::create([
