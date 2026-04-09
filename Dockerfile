@@ -28,7 +28,7 @@ COPY . .
 
 # Instalar dependencias con permisos adecuados
 RUN composer install --no-interaction --optimize-autoloader --no-dev
-RUN chown -R www-data:www-data /var/www/storage /var/www/cache
+RUN chown -R www-data:www-data /var/www/storage /var/www/bootstrap/cache
 
 # Puerto expuesto para PHP-FPM
 EXPOSE 9000
