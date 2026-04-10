@@ -5,7 +5,7 @@
         <meta name="viewport" content="width=device-width, initial-scale=1">
         <meta name="csrf-token" content="{{ csrf_token() }}">
 
-        <title>{{ $header ?? config('app.name', 'Softlinkia') }} | Seguridad y Monitoreo</title>
+        <title>{{ isset($header) ? strip_tags($header) : config('app.name', 'Softlinkia') }} | Seguridad y Monitoreo</title>
         <meta name="description" content="Plataforma de monitoreo de seguridad Softlinkia. Gestión de dispositivos, incidencias y logs de auditoría en tiempo real.">
 
         <!-- Fonts -->
