@@ -62,16 +62,17 @@ El sistema estará disponible en `http://localhost:8000`.
 - **Operador**: operador@softlinkia.com (Gestión activa, sin borrado ni bitácora)
 - **Cliente**: cliente@softlinkia.com (Visualización filtrada de sus propios equipos)
 
-## 📊 Arquitectura de Base de Datos
-```mermaid
-erDiagram
-    USERS ||--o{ ROLES : has
-    USERS ||--o{ DEVICES : owns
-    DEVICES ||--o{ DEVICE_EVENTS : generates
-    DEVICES ||--o{ INCIDENTS : relates_to
-    INCIDENTS ||--o{ INCIDENT_HISTORIES : logs
-    USERS ||--o{ AUDIT_LOGS : performs
-```
+## 📊 Arquitectura de Base de Datos (ERD)
+
+![Diagrama de Entidad Relación](./public/img/diagram-erd.png)
+
+## 🚀 Producción (Railway)
+
+La plataforma se encuentra desplegada y operativa en la nube de Railway:
+
+- **Frontend URL**: [https://softlinkia-security-monitor-production.up.railway.app](https://softlinkia-security-monitor-production.up.railway.app)
+- **Base de Datos**: MySQL (Internal Networking en us-east-4)
+- **CI/CD**: Despliegue automático desde la rama `dev`.
 
 ---
 *Desarrollado con ❤️ para Softlinkia S.A. de C.V. - Abril 2026*
