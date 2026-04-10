@@ -1,77 +1,101 @@
-# Softlinkia Security Monitor - Prueba Técnica
+# 🛡️ Softlinkia Security Monitor - Enterprise Solution
 
-Este proyecto es una aplicación web monolítica desarrollada en **Laravel 11** para la gestión de operaciones y monitoreo de eventos de seguridad, realizada como parte de la prueba técnica para **Softlinkia S.A. de C.V.**
+[![Producción Operativa](https://img.shields.io/badge/Producci%C3%B3n-Operativa-brightgreen?style=for-the-badge&logo=railway)](https://softlinkia-security-monitor-production.up.railway.app/)
+[![Laravel 11](https://img.shields.io/badge/Framework-Laravel%2011-FF2D20?style=for-the-badge&logo=laravel)](https://laravel.com)
+[![Livewire 3](https://img.shields.io/badge/Frontend-Livewire%203-FB70A9?style=for-the-badge&logo=livewire)](https://livewire.laravel.com)
 
-## 🚀 Descripción del Proyecto
+**Softlinkia Security Monitor** es una plataforma monolítica de vanguardia diseñada para la gestión y monitoreo de activos de seguridad en tiempo real. Este proyecto no solo resuelve la gestión de dispositivos, sino que implementa una arquitectura resiliente y automatizada pensada para entornos corporativos de alta demanda.
 
-El sistema permite la gestión de dispositivos de seguridad simulados, el monitoreo de eventos en tiempo real y la gestión automática/manual de incidencias basadas en reglas de negocio. Incluye un control de acceso robusto basado en roles (RBAC) y un panel administrativo para supervisar la operación.
-
-### Requerimientos Implementados ✅
-- **Autenticación y RBAC**: Roles para Administrador, Operador y Cliente mediante Spatie.
-- **Módulo de Dispositivos**: CRUD reactivo con Livewire y gestión de metadatos JSON.
-- **Simulación de Eventos**: Simulación externa vía API POST `/api/simulate-event` e interna vía UI.
-- **Gestión de Incidencias**: Automatización (Desconexión -> Incidencia) y creación manual con historial.
-- **Dashboard Operativo**: Centro de mando con KPIs vivos, gráficas de flota y filtros globales.
-- **Auditoría (Audit Log)**: Bitácora completa de acciones de usuarios y cambios de estado.
-- **UX/UI Profesional**: Notificaciones Toasts en tiempo real y diseño Premium con TailwindCSS.
-
-## 🛠️ Stack Tecnológico
-- **Framework**: Laravel 11
-- **Reactividad**: Livewire 3 (Volt)
-- **Styling**: TailwindCSS
-- **Base de Datos**: MySQL
-- **Paquetes Clave**: Spatie Permission, Laravel Breeze (Volt stack), Sanctum.
-
-## 🛡️ Mejores Prácticas y Seguridad Avanzada
-- **Seguridad en Capas**: Implementado `SecurityHeadersMiddleware` para protección contra XSS, Clickjacking y Sniffing.
-- **Asincronía (Performance)**: El registro de auditoría se procesa mediante **Jobs en segundo plano** para no penalizar la latencia del usuario.
-- **Arquitectura Limpia**: Uso de **Form Objects** para validación y **Observers** para disparar reglas de negocio automáticas.
-- **Resiliencia**: Páginas de error (404/500) personalizadas bajo la estética corporativa.
-
-## 📦 Instalación y Despliegue
-
-### Opción A: Con Docker (Recomendado 🐳)
-Ideal para evaluación rápida sin instalar dependencias locales.
-1. **Clonar el proyecto.**
-2. **Copiar el entorno:** `cp .env.example .env`
-3. **Levantar contenedores:**
-   ```bash
-   docker-compose up -d --build
-   ```
-4. **Instalar dependencias y poblar (dentro del contenedor):**
-   ```bash
-   docker-compose exec app composer install
-   docker-compose exec app php artisan key:generate
-   docker-compose exec app php artisan migrate --seed
-   ```
-El sistema estará disponible en `http://localhost:8000`.
-
-### Opción B: Instalación Manual
-1. **Clonar e instalar:**
-   ```bash
-   git clone https://github.com/Darioantonio20/softlinkia-security-monitor.git
-   composer install
-   npm install && npm run build
-   ```
-2. **Configurar BD (MySQL):** Crear base de datos `softlinkia_db` y configurar en `.env`.
-3. **Poblamiento:** `php artisan migrate --seed`
-4. **Correr:** `php artisan serve` y `npm run dev`.
-
-## 🔐 Accesos de Prueba (Password: `password`)
-- **Administrador**: admin@softlinkia.com (Poder total, Bitácora, Borrado)
-- **Operador**: operador@softlinkia.com (Gestión activa, sin borrado ni bitácora)
-- **Cliente**: cliente@softlinkia.com (Visualización filtrada de sus propios equipos)
-
-## 📊 Arquitectura de Base de Datos
-```mermaid
-erDiagram
-    USERS ||--o{ ROLES : has
-    USERS ||--o{ DEVICES : owns
-    DEVICES ||--o{ DEVICE_EVENTS : generates
-    DEVICES ||--o{ INCIDENTS : relates_to
-    INCIDENTS ||--o{ INCIDENT_HISTORIES : logs
-    USERS ||--o{ AUDIT_LOGS : performs
-```
+🌐 **Demo en Vivo**: [https://softlinkia-security-monitor-production.up.railway.app/](https://softlinkia-security-monitor-production.up.railway.app/)
 
 ---
-*Desarrollado con ❤️ para Softlinkia S.A. de C.V. - Abril 2026*
+
+## 🛠️ Stack Tecnológico de Alto Nivel
+
+El proyecto utiliza un stack moderno elegido por su estabilidad, velocidad de desarrollo y escalabilidad:
+
+| Capa | Tecnología | Descripción |
+| :--- | :--- | :--- |
+| **Núcleo** | **Laravel 11 / PHP 8.2** | Motor robusto con las últimas optimizaciones de rendimiento y seguridad. |
+| **Frontend**| **Livewire 3 (Volt)** | Reactividad total sin salir del ecosistema PHP, ofreciendo una experiencia SPA fluida. |
+| **Estilo** | **TailwindCSS** | Diseño Premium con efectos de Glassmorphism, Mesh Gradients y micro-animaciones. |
+| **Base de Datos** | **MySQL 8.0** | Almacenamiento relacional optimizado con soporte para JSON dinámico. |
+| **Tiempo Real** | **Laravel Reverb** | WebSockets nativos para notificaciones instantáneas de seguridad. |
+| **Despliegue** | **Docker & Railway** | Infraestructura inmutable con CI/CD automatizado. |
+
+---
+
+## ✨ Características Principales (Features)
+
+### 🖥️ Frontend (UX/UI Premium)
+- **Dashboard Operativo Vivo**: Gráficas de tendencias (Chart.js) que se actualizan dinámicamente sin recargar la página.
+- **Sistema Global de Notificaciones**: Toasts inteligentes que alertan sobre actividad reciente en cualquier parte de la App.
+- **Navegación Fluida**: Interfaz responsiva probada en dispositivos móviles (Nexus 5/iPhone) con navegación optimizada.
+- **Reactividad Volt**: Componentes ultrarrápidos para filtrado de dispositivos e incidencias en tiempo real.
+
+### ⚙️ Backend (Arquitectura Robusta)
+- **Automatización de Negocio**: Observers inteligentes que generan incidencias automáticamente al detectar desconexiones (Fallo Crítico).
+- **Control de Acceso (RBAC)**: Gestión granular de permisos (Admin, Operador, Cliente) mediante Spatie.
+- **Bitácora de Auditoría Proactiva**: Middleware dedicado que registra cada acción administrativa en segundo plano (vía Jobs/Queue).
+- **Procesamiento Asíncrono**: Uso de colas (Queues) para no bloquear la experiencia del usuario final.
+- **Simulación de Eventos**: API REST pública y panel interno para simular alertas de sensores y cámaras.
+
+---
+
+## 🛡️ Seguridad y Calidad Técnica
+
+El proyecto ha sido evaluado bajo los más altos estándares de desarrollo:
+
+- **Security Headers**: Middleware personalizado que inyecta cabeceras de protección activa (CSP, XSS, Clickjacking).
+- **Inyección de Dependencias**: Uso estricto de los patrones de Laravel para un código testeable y mantenible.
+- **Validación de Datos**: Reglas estrictas y saneamiento de entradas para prevenir inyecciones y ataques comunes.
+- **Mapeo de Relaciones**: Estructura de BD normalizada con integridad referencial completa (ver ERD abajo).
+
+---
+
+## 📊 Arquitectura de Base de Datos (ERD)
+
+![Diagrama de Entidad Relación](./public/img/diagram-erd.png)
+
+---
+
+## 🚀 Guía de Instalación
+
+### 🐳 Opción 1: Con Docker (Recomendado)
+Para una experiencia "Plug & Play":
+1. Clona el repositorio.
+2. Crea tu archivo `.env` (`cp .env.example .env`).
+3. Ejecuta: `docker-compose up -d --build`.
+4. Inicializa el sistema:
+   ```bash
+   docker-compose exec app php artisan migrate --seed
+   ```
+
+### 💻 Opción 2: Instalación Manual (Laragon/XAMPP)
+1. Instala dependencias: `composer install` y `npm install`.
+2. Configura tu base de datos MySQL en el `.env`.
+3. Compila los assets: `npm run build`.
+4. Ejecuta las migraciones: `php artisan migrate --seed`.
+5. Sirve el proyecto: `php artisan serve`.
+
+---
+
+## 🔐 Credenciales de Acceso (Password: `password`)
+
+- **Administrador**: `admin@softlinkia.com`
+- **Operador**: `operador@softlinkia.com`
+- **Cliente**: `cliente@softlinkia.com`
+
+---
+
+## 🌎 Pruebas en Producción (Railway)
+
+Si deseas probar el despliegue actual:
+1. Accede a la URL de Producción mencionada arriba.
+2. Inicia sesión con cualquiera de las credenciales de prueba.
+3. Para simular un evento externo, puedes enviar un POST a:
+   `https://softlinkia-security-monitor-production.up.railway.app/api/simulate-event`
+   (Payload: `{"device_id": 1, "type": "Anomalía detectada"}`)
+
+---
+*Este proyecto refleja el compromiso con la excelencia técnica y la innovación constante de Softlinkia S.A. de C.V.*
