@@ -136,29 +136,7 @@ new class extends Component {
     }
 }; ?>
 
-<div x-data="{ notifications: [] }" 
-     @notify.window="notifications.push($event.detail); setTimeout(() => notifications.shift(), 5000)">
-    
-    <!-- Notifications Overlay (Premium Toast) -->
-    <div class="fixed bottom-10 right-10 z-[100] space-y-5">
-        <template x-for="note in notifications" :key="note">
-            <div x-transition:enter="transition ease-out duration-500"
-                 x-transition:enter-start="opacity-0 translate-y-20 scale-90 blur-lg"
-                 x-transition:enter-end="opacity-100 translate-y-0 scale-100 blur-0"
-                 class="liquid-glass px-10 py-6 rounded-[2.5rem] shadow-[0_30px_60px_-15px_rgba(0,0,0,0.2)] border-white/50 flex items-center gap-6 min-w-[380px] group">
-                <div class="p-3 bg-indigo-600 rounded-2xl shadow-sm transition-colors duration-500">
-                    <svg class="w-6 h-6 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M15 17h5l-1.405-1.405A2.032 2.032 0 0118 14.158V11a6.002 6.002 0 00-4-5.659V5a2 2 0 10-4 0v.341C7.67 6.165 6 8.388 6 11v3.159c0 .538-.214 1.055-.595 1.436L4 17h5m6 0v1a3 3 0 11-6 0v-1m6 0H9" />
-                    </svg>
-                </div>
-                <div class="flex-1">
-                    <p class="text-[9px] font-black uppercase tracking-[0.3em] text-indigo-700">Protocolo de Notificación</p>
-                    <span class="text-[15px] font-black text-slate-900 tracking-tight block mt-1" x-text="note"></span>
-                </div>
-            </div>
-        </template>
-    </div>
-
+<div>
     @if (session('status'))
         <div class="mb-10 glass p-6 rounded-3xl border-emerald-500/20 flex items-center gap-5 animate-in fade-in slide-in-from-top-6 duration-700">
             <div class="p-3 bg-emerald-500 text-white rounded-2xl shadow-xl shadow-emerald-500/20">

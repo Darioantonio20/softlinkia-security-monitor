@@ -5,6 +5,27 @@ use Livewire\Volt\Component;
 
 new class extends Component
 {
+    public $lastCount = 0;
+
+    public function mount()
+    {
+        $this->lastCount = auth()->user()->unreadNotifications->count();
+    }
+
+    /**
+     * Verifica si hay nuevas notificaciones para lanzar el Toast de actividad.
+     */
+    public function checkActivity()
+    {
+        $currentCount = auth()->user()->unreadNotifications->count();
+        
+        if ($currentCount > $this->lastCount) {
+            $this->dispatch('notify', '¡Hay actividad reciente de seguridad!');
+        }
+        
+        $this->lastCount = $currentCount;
+    }
+
     /**
      * Log the current user out of the application.
      */
@@ -12,10 +33,9 @@ new class extends Component
     {
         $logout();
 
-        $this->redirect('/', navigate: true);
+        $this->redirect('/');
     }
-}; ?>
-
+}; ?><div>
 <nav x-data="{ open: false }" class="sticky top-0 z-50 bg-white/80 backdrop-blur-xl border-b border-slate-100/60 shadow-sm transition-all duration-300">
     <!-- Primary Navigation Menu -->
     <div class="max-w-7xl mx-auto px-6 lg:px-10">
@@ -23,7 +43,7 @@ new class extends Component
             <div class="flex items-center gap-10">
                 <!-- Logo -->
                 <div class="flex-shrink-0 flex items-center group cursor-pointer">
-                    <a href="{{ route('dashboard') }}" wire:navigate class="relative">
+                    <a href="{{ route('dashboard') }}" class="relative">
                         <div class="absolute -inset-2 bg-indigo-500/10 rounded-xl blur-lg group-hover:bg-indigo-500/20 transition-all duration-500"></div>
                         <x-application-logo class="block h-10 w-auto fill-current text-indigo-600 relative" />
                     </a>
@@ -31,23 +51,23 @@ new class extends Component
 
                 <!-- Navigation Links -->
                 <div class="hidden space-x-2 sm:-my-px sm:flex items-center">
-                    <x-nav-link :href="route('dashboard')" :active="request()->routeIs('dashboard')" wire:navigate 
+                    <x-nav-link :href="route('dashboard')" :active="request()->routeIs('dashboard')" 
                         class="px-5 py-2.5 rounded-xl text-[11px] font-black uppercase tracking-[0.15em] transition-all duration-300 border-none {{ request()->routeIs('dashboard') ? 'bg-indigo-50 text-indigo-700 shadow-sm shadow-indigo-100' : 'text-slate-500 hover:text-slate-900 hover:bg-slate-50' }}">
-                        {{ __('Monitor') }}
+                        {{ __("Monitor") }}
                     </x-nav-link>
-                    <x-nav-link :href="route('devices')" :active="request()->routeIs('devices')" wire:navigate 
+                    <x-nav-link :href="route('devices')" :active="request()->routeIs('devices')" 
                         class="px-5 py-2.5 rounded-xl text-[11px] font-black uppercase tracking-[0.15em] transition-all duration-300 border-none {{ request()->routeIs('devices') ? 'bg-indigo-50 text-indigo-700 shadow-sm shadow-indigo-100' : 'text-slate-500 hover:text-slate-900 hover:bg-slate-50' }}">
-                        {{ __('Dispositivos') }}
+                        {{ __("Dispositivos") }}
                     </x-nav-link>
-                    <x-nav-link :href="route('incidents')" :active="request()->routeIs('incidents')" wire:navigate 
+                    <x-nav-link :href="route('incidents')" :active="request()->routeIs('incidents')" 
                         class="px-5 py-2.5 rounded-xl text-[11px] font-black uppercase tracking-[0.15em] transition-all duration-300 border-none {{ request()->routeIs('incidents') ? 'bg-indigo-50 text-indigo-700 shadow-sm shadow-indigo-100' : 'text-slate-500 hover:text-slate-900 hover:bg-slate-50' }}">
-                        {{ __('Incidencias') }}
+                        {{ __("Incidencias") }}
                     </x-nav-link>
 
-                    @role('Administrador')
-                    <x-nav-link :href="route('audit-logs')" :active="request()->routeIs('audit-logs')" wire:navigate 
+                    @role("Administrador")
+                    <x-nav-link :href="route('audit-logs')" :active="request()->routeIs('audit-logs')" 
                         class="px-5 py-2.5 rounded-xl text-[11px] font-black uppercase tracking-[0.15em] transition-all duration-300 border-none {{ request()->routeIs('audit-logs') ? 'bg-indigo-50 text-indigo-700 shadow-sm shadow-indigo-100' : 'text-slate-500 hover:text-slate-900 hover:bg-slate-50' }}">
-                        {{ __('Bitácora') }}
+                        {{ __("Bitácora") }}
                     </x-nav-link>
                     @endrole
                 </div>
@@ -57,8 +77,8 @@ new class extends Component
             <div class="hidden sm:flex sm:items-center">
                 
                 {{-- Notificaciones (Campana) --}}
-                <div class="relative mr-4 group">
-                    <button class="relative p-2 text-slate-400 hover:text-indigo-600 hover:bg-indigo-50 rounded-xl transition-all duration-300">
+                <div class="relative mr-4 group" wire:poll.15s="checkActivity">
+                    <a href="{{ route('incidents') }}" class="relative p-2 text-slate-400 hover:text-indigo-600 hover:bg-indigo-50 rounded-xl transition-all duration-300 block">
                         <svg class="w-6 h-6" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
                             <path stroke-linecap="round" stroke-linejoin="round" d="M15 17h5l-1.405-1.405A2.032 2.032 0 0118 14.158V11a6.002 6.002 0 00-4-5.659V5a2 2 0 10-4 0v.341C7.67 6.165 6 8.388 6 11v3.159c0 .538-.214 1.055-.595 1.436L4 17h5m6 0v1a3 3 0 11-6 0v-1m6 0H9" />
                         </svg>
@@ -70,7 +90,7 @@ new class extends Component
                                 <span class="relative inline-flex rounded-full h-3 w-3 bg-rose-500 border-2 border-white"></span>
                             </span>
                         @endif
-                    </button>
+                    </a>
                     
                     {{-- Tooltip rápido --}}
                     <div class="absolute top-full right-0 mt-2 hidden group-hover:block bg-slate-900 text-white text-[9px] font-black uppercase tracking-widest px-3 py-1.5 rounded-lg shadow-xl whitespace-nowrap z-50 pointer-events-none">
@@ -103,7 +123,7 @@ new class extends Component
                         </div>
 
                         <div class="p-2 space-y-1">
-                            <x-dropdown-link :href="route('profile')" wire:navigate class="flex items-center gap-3 px-4 py-3 rounded-xl text-[12px] font-black text-slate-700 hover:bg-indigo-50 hover:text-indigo-600 transition-all group">
+                            <x-dropdown-link :href="route('profile')" class="flex items-center gap-3 px-4 py-3 rounded-xl text-[12px] font-black text-slate-700 hover:bg-indigo-50 hover:text-indigo-600 transition-all group">
                                 <div class="p-1.5 bg-slate-100 rounded-lg group-hover:bg-indigo-100 transition-colors">
                                     <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z" /></svg>
                                 </div>
@@ -136,17 +156,17 @@ new class extends Component
     <!-- Responsive Navigation Menu -->
     <div :class="{'block': open, 'hidden': ! open}" class="hidden sm:hidden bg-white border-t border-slate-100 overflow-hidden transition-all duration-300">
         <div class="px-6 pt-6 pb-4 space-y-2">
-            <x-responsive-nav-link :href="route('dashboard')" :active="request()->routeIs('dashboard')" wire:navigate class="rounded-2xl {{ request()->routeIs('dashboard') ? 'bg-indigo-50 text-indigo-700' : '' }}">
+            <x-responsive-nav-link :href="route('dashboard')" :active="request()->routeIs('dashboard')" class="rounded-2xl {{ request()->routeIs('dashboard') ? 'bg-indigo-50 text-indigo-700' : '' }}">
                 {{ __('Monitor General') }}
             </x-responsive-nav-link>
-            <x-responsive-nav-link :href="route('devices')" :active="request()->routeIs('devices')" wire:navigate class="rounded-2xl {{ request()->routeIs('devices') ? 'bg-indigo-50 text-indigo-700' : '' }}">
+            <x-responsive-nav-link :href="route('devices')" :active="request()->routeIs('devices')" class="rounded-2xl {{ request()->routeIs('devices') ? 'bg-indigo-50 text-indigo-700' : '' }}">
                 {{ __('Dispositivos') }}
             </x-responsive-nav-link>
-            <x-responsive-nav-link :href="route('incidents')" :active="request()->routeIs('incidents')" wire:navigate class="rounded-2xl {{ request()->routeIs('incidents') ? 'bg-indigo-50 text-indigo-700' : '' }}">
+            <x-responsive-nav-link :href="route('incidents')" :active="request()->routeIs('incidents')" class="rounded-2xl {{ request()->routeIs('incidents') ? 'bg-indigo-50 text-indigo-700' : '' }}">
                 {{ __('Incidencias') }}
             </x-responsive-nav-link>
-            @role('Administrador')
-            <x-responsive-nav-link :href="route('audit-logs')" :active="request()->routeIs('audit-logs')" wire:navigate class="rounded-2xl {{ request()->routeIs('audit-logs') ? 'bg-indigo-50 text-indigo-700' : '' }}">
+            @role("Administrador")
+            <x-responsive-nav-link :href="route('audit-logs')" :active="request()->routeIs('audit-logs')" class="rounded-2xl {{ request()->routeIs('audit-logs') ? 'bg-indigo-50 text-indigo-700' : '' }}">
                 {{ __('Bitácora de Auditoría') }}
             </x-responsive-nav-link>
             @endrole
@@ -165,7 +185,7 @@ new class extends Component
             </div>
 
             <div class="space-y-2">
-                <x-responsive-nav-link :href="route('profile')" wire:navigate class="rounded-2xl">
+                <x-responsive-nav-link :href="route('profile')">
                     {{ __('Mi Perfil') }}
                 </x-responsive-nav-link>
 
@@ -179,3 +199,26 @@ new class extends Component
         </div>
     </div>
 </nav>
+
+{{-- Sistema de Toasts Global (Responsivo y Persistente) --}}
+<div x-data="{ notifications: [] }" 
+     @notify.window="notifications.push($event.detail); setTimeout(() => notifications.shift(), 5000)"
+     class="fixed bottom-4 right-4 left-4 sm:left-auto sm:bottom-10 sm:right-10 z-[100] space-y-4">
+    <template x-for="note in notifications" :key="note">
+        <div x-transition:enter="transition ease-out duration-500"
+             x-transition:enter-start="opacity-0 translate-y-20 scale-95 blur-lg"
+             x-transition:enter-end="opacity-100 translate-y-0 scale-100 blur-0"
+             class="bg-white/95 backdrop-blur-xl px-6 py-4 sm:px-10 sm:py-6 rounded-3xl sm:rounded-[2.5rem] shadow-[0_20px_50px_-15px_rgba(0,0,0,0.15)] border border-slate-100 flex items-center gap-4 sm:gap-6 w-full sm:min-w-[380px] group border-l-4 border-l-rose-600">
+            <div class="flex-shrink-0 p-2 sm:p-3 bg-rose-600 text-white rounded-xl shadow-lg shadow-rose-200">
+                <svg class="w-5 h-5 sm:w-6 sm:h-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M15 17h5l-1.405-1.405A2.032 2.032 0 0118 14.158V11a6.002 6.002 0 00-4-5.659V5a2 2 0 10-4 0v.341C7.67 6.165 6 8.388 6 11v3.159c0 .538-.214 1.055-.595 1.436L4 17h5m6 0v1a3 3 0 11-6 0v-1m6 0H9" />
+                </svg>
+            </div>
+            <div class="flex-1 min-w-0">
+                <p class="text-[8px] sm:text-[9px] font-black uppercase tracking-[0.2em] text-rose-700 truncate">Alerta de Seguridad</p>
+                <span class="text-[13px] sm:text-[15px] font-black text-slate-900 tracking-tight block truncate" x-text="note"></span>
+            </div>
+        </div>
+    </template>
+</div>
+</div>

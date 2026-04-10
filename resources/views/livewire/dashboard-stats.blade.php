@@ -399,18 +399,15 @@ new class extends Component {
 
 <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 <script>
-    document.addEventListener('livewire:navigated', () => {
-        initChart();
-    });
-
-    document.addEventListener('livewire:load', () => {
-        initChart();
-    });
-
+    /**
+     * Lógica persistente para la gráfica.
+     * Se ejecuta al cargar, al navegar y después de cada actualización de Livewire.
+     */
     function initChart() {
         const ctx = document.getElementById('incidentChart');
         if (!ctx) return;
 
+        // Limpiar instancia previa si existe
         let chartStatus = Chart.getChart("incidentChart");
         if (chartStatus != undefined) {
             chartStatus.destroy();
@@ -440,24 +437,26 @@ new class extends Component {
             options: {
                 responsive: true,
                 maintainAspectRatio: false,
-                plugins: {
-                    legend: { display: false }
-                },
+                plugins: { legend: { display: false } },
                 scales: {
-                    y: {
-                        beginAtZero: true,
-                        grid: { display: false },
-                        ticks: { stepSize: 1, font: { size: 9, weight: 'bold' } }
-                    },
-                    x: {
-                        grid: { display: false },
-                        ticks: { font: { size: 9, weight: 'bold' } }
-                    }
+                    y: { beginAtZero: true, grid: { display: false }, ticks: { stepSize: 1, font: { size: 9, weight: 'bold' } } },
+                    x: { grid: { display: false }, ticks: { font: { size: 9, weight: 'bold' } } }
                 }
             }
         });
     }
 
-    setTimeout(initChart, 500);
+    // Inicialización en carga y navegación
+    document.addEventListener('livewire:navigated', initChart);
+    document.addEventListener('DOMContentLoaded', initChart);
+
+    // Reinicialización CRÍTICA tras cada actualización de Livewire (Polling)
+    document.addEventListener('livewire:init', () => {
+        Livewire.hook('morph.updated', ({ el, component }) => {
+            if (component.name === 'dashboard-stats') {
+                initChart();
+            }
+        });
+    });
 </script>
 </div>

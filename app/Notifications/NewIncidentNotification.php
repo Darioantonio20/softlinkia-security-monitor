@@ -30,7 +30,7 @@ class NewIncidentNotification extends Notification
             'type' => $this->incident->type,
             'device_name' => $this->incident->device->name ?? 'Desconocido',
             'message' => "Nueva incidencia detectada: {$this->incident->type}",
-            'url' => route('incidents.index'), // Ajustar según tu ruta real
+            'url' => route('incidents'), // Ajustado a la ruta real
         ];
     }
 }

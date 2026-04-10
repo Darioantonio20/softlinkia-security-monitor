@@ -54,8 +54,14 @@ class IncidentObserver
             'comments' => 'Creación inicial de la incidencia.',
         ]);
 
-        // Notificar a administradores y operadores
+        // Notificar a administradores, operadores y al cliente afectado
         $usersToNotify = User::role(['Administrador', 'Operador'])->get();
-        Notification::send($usersToNotify, new NewIncidentNotification($incident));
+        
+        // Incluir al cliente dueño del equipo si existe
+        if ($incident->device && $incident->device->client) {
+            $usersToNotify->push($incident->device->client);
+        }
+
+        Notification::send($usersToNotify->unique('id'), new NewIncidentNotification($incident));
     }
 }
